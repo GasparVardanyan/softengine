@@ -43,7 +43,7 @@ struct vector3 * vector3_Norm (struct vector3 * const restrict v)
 
 struct vector3 * vector3_Transform (struct vector3 * const restrict v, const struct matrix4 m)
 {
-	const scalar_t w = v -> x * m.m30 + v -> y * m.m31 + v -> z * m.m32 + 1 * m.m33;
+	const scalar_t w = v -> x * m.m03 + v -> y * m.m13 + v -> z * m.m23 + 1 * m.m33;
 
 	// TODO: do we actually need *w* to work with *transform* matrices?
 
@@ -97,7 +97,7 @@ struct vector3 vector3_cross (const struct vector3 v1, const struct vector3 v2)
 
 struct vector3 vector3_transform (const struct vector3 v, const struct matrix4 m)
 {
-	const scalar_t w = v.x * m.m30 + v.y * m.m31 + v.z * m.m32 + 1 * m.m33;
+	const scalar_t w = v.x * m.m03 + v.y * m.m13 + v.z * m.m23 + 1 * m.m33;
 
 	// TODO: do we actually need *w* to work with *transform* matrices?
 

@@ -35,12 +35,21 @@ struct matrix4 * matrix4_Mul (struct matrix4 * const restrict m1, const struct m
 	return m1;
 }
 
+struct matrix4 * matrix4_Translate (struct matrix4 * const restrict m, const scalar_t x, const scalar_t y, const scalar_t z)
+{
+	m -> m03 = x;
+	m -> m13 = y;
+	m -> m23 = z;
+
+	return m;
+}
+
 /* struct matrix4 * matrix4_Rotate (struct matrix4 * const restrict m, scalar_t rotX, scalar_t rotY, scalar_t rotZ) */
 /* { */
 /*     // how to combine rotations? */
 /* } */
 
-struct matrix4 MATRIX4_ROTATIONX (scalar_t a)
+struct matrix4 MATRIX4_ROTATIONX (const scalar_t a)
 {
 	const scalar_t cosa = cos (a);
 	const scalar_t sina = sin (a);
@@ -52,7 +61,7 @@ struct matrix4 MATRIX4_ROTATIONX (scalar_t a)
 	};
 }
 
-struct matrix4 MATRIX4_ROTATIONY (scalar_t a)
+struct matrix4 MATRIX4_ROTATIONY (const scalar_t a)
 {
 	const scalar_t cosa = cos (a);
 	const scalar_t sina = sin (a);
@@ -64,7 +73,7 @@ struct matrix4 MATRIX4_ROTATIONY (scalar_t a)
 	};
 }
 
-struct matrix4 MATRIX4_ROTATIONZ (scalar_t a)
+struct matrix4 MATRIX4_ROTATIONZ (const scalar_t a)
 {
 	const scalar_t cosa = cos (a);
 	const scalar_t sina = sin (a);
@@ -73,6 +82,15 @@ struct matrix4 MATRIX4_ROTATIONZ (scalar_t a)
 		.m22 = 1, .m33 = 1,
 		.m00 = cosa, .m01 = -sina,
 		.m10 = -sina, .m11 = cosa
+	};
+}
+
+struct matrix4 MATRIX4_TRANSLATION (const scalar_t x, const scalar_t y, const scalar_t z)
+{
+	return (struct matrix4) {
+		.m00 = 1, .m11 = 1, .m22 = 1,
+		.m03 = x, .m13 = y, .m23 = z,
+		.m33 = 1
 	};
 }
 
@@ -96,4 +114,13 @@ struct matrix4 matrix4_mul (const struct matrix4 m1, const struct matrix4 m2)
 		.m32 = m1.m30 * m2.m02 + m1.m31 * m2.m12 + m1.m32 * m2.m22 + m1.m33 * m2.m32,
 		.m33 = m1.m30 * m2.m03 + m1.m31 * m2.m13 + m1.m32 * m2.m23 + m1.m33 * m2.m33
 	};
+}
+
+struct matrix4 matrix4_translate (struct matrix4 m, const scalar_t x, const scalar_t y, const scalar_t z)
+{
+	m.m03 = x;
+	m.m13 = y;
+	m.m23 = z;
+
+	return m;
 }

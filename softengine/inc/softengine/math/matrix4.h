@@ -20,13 +20,16 @@ static const struct matrix4 MATRIX4_IDENTITY = {
 	.m00 = 1, .m11 = 1, .m22 = 1, .m33 = 1
 };
 static const struct matrix4 MATRIX4_ZERO;
-struct matrix4 MATRIX4_ROTATIONX (scalar_t);
-struct matrix4 MATRIX4_ROTATIONY (scalar_t);
-struct matrix4 MATRIX4_ROTATIONZ (scalar_t);
+struct matrix4 MATRIX4_ROTATIONX (const scalar_t);
+struct matrix4 MATRIX4_ROTATIONY (const scalar_t);
+struct matrix4 MATRIX4_ROTATIONZ (const scalar_t);
+struct matrix4 MATRIX4_TRANSLATION (const scalar_t, const scalar_t, const scalar_t);
 
 // assignment
 struct matrix4 * matrix4_Mul (struct matrix4 * const restrict, const struct matrix4);
+struct matrix4 * matrix4_Translate (struct matrix4 * const restrict, const scalar_t, const scalar_t, const scalar_t);
 
 struct matrix4 matrix4_mul (const struct matrix4, const struct matrix4);
+struct matrix4 matrix4_translate (struct matrix4, const scalar_t, const scalar_t, const scalar_t);
 
 # endif // __SOFTENGINE_MATH_MATRIX4_H

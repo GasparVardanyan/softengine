@@ -81,16 +81,15 @@ struct matrix4 MATRIX4_ROTATIONZ (const scalar_t a)
 	return (struct matrix4) {
 		.m22 = 1, .m33 = 1,
 		.m00 = cosa, .m01 = -sina,
-		.m10 = -sina, .m11 = cosa
+		.m10 = sina, .m11 = cosa
 	};
 }
 
 struct matrix4 MATRIX4_TRANSLATION (const scalar_t x, const scalar_t y, const scalar_t z)
 {
 	return (struct matrix4) {
-		.m00 = 1, .m11 = 1, .m22 = 1,
-		.m03 = x, .m13 = y, .m23 = z,
-		.m33 = 1
+		.m00 = 1, .m11 = 1, .m22 = 1, .m33 = 1,
+		.m03 = x, .m13 = y, .m23 = z
 	};
 }
 

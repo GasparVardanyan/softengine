@@ -43,13 +43,7 @@ struct vector3 * vector3_Norm (struct vector3 * const restrict v)
 
 struct vector3 * vector3_Transform (struct vector3 * const restrict v, const struct matrix4 m)
 {
-	const scalar_t w = v -> x * m.m03 + v -> y * m.m13 + v -> z * m.m23 + 1 * m.m33;
-
-	// TODO: do we actually need *w* to work with *transform* matrices?
-
-	v -> x = (v -> x * m.m00 + v -> y * m.m01 + v -> z * m.m02 + m.m03) / w;
-	v -> y = (v -> x * m.m10 + v -> y * m.m11 + v -> z * m.m12 + m.m13) / w;
-	v -> z = (v -> x * m.m20 + v -> y * m.m21 + v -> z * m.m22 + m.m23) / w;
+	* v = vector3_transform (* v, m);
 
 	return v;
 }

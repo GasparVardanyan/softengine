@@ -5,12 +5,19 @@
 
 struct matrix4
 {
-	scalar_t
-		m00, m01, m02, m03,
-		m10, m11, m12, m13,
-		m20, m21, m22, m23,
-		m30, m31, m32, m33
-	;
+	union
+	{
+		struct
+		{
+			scalar_t
+				m00, m01, m02, m03,
+				m10, m11, m12, m13,
+				m20, m21, m22, m23,
+				m30, m31, m32, m33
+			;
+		};
+		scalar_t m [16];
+	};
 };
 
 extern const struct matrix4 MATRIX4_IDENTITY;

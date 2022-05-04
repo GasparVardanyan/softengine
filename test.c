@@ -3,8 +3,6 @@
 # include <math.h>
 # include <stdio.h>
 
-/* const int view_width = 160; */
-/* const int view_height = 100; */
 const int view_width = 640;
 const int view_height = 480;
 

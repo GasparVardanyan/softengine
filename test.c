@@ -82,12 +82,20 @@ void render (void)
 			matrix4_mul (world_matrix, view_matrix)
 		;
 
-		vert = vector3_transform (
-			vert, transform_matrix
-		);
+		/* vert = vector3_transform ( */
+		/*     vert, transform_matrix */
+		/* ); */
+        /*  */
+		/* vert = vector3_transform ( */
+		/*     vert, projection_matrix */
+		/* ); */
 
 		vert = vector3_transform (
-			vert, projection_matrix
+			vert,
+			matrix4_mul (
+				transform_matrix,
+				projection_matrix
+			)
 		);
 
 		vert.x /= vert.z;

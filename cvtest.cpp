@@ -1,5 +1,4 @@
 # include <opencv2/highgui.hpp>
-# include <opencv2/imgproc.hpp>
 
 extern "C" {
 
@@ -13,7 +12,6 @@ extern "C" {
 	{
 		scene.at <cv::Vec3b> (cv::Point (x, y)) = {b, g, r};
 	}
-
 }
 
 int main ()
@@ -21,9 +19,7 @@ int main ()
 	while (true)
 	{
 		render ();
-		cv::Mat view;
-		cv::resize (scene, view, cv::Size (640, 480));
-		cv::imshow ("softengine", view);
+		cv::imshow ("softengine", scene);
 		scene.setTo (cv::Scalar (0x66, 0x44, 0x22));
 		char key = cv::waitKey (1);
 		if (key == 'q')

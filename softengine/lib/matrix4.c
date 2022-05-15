@@ -84,9 +84,9 @@ struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)
 
 struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scalar_t z)
 {
-	m.m03 = x;
-	m.m13 = y;
-	m.m23 = z;
+	m.m30 = x;
+	m.m31 = y;
+	m.m32 = z;
 
 	return m;
 }

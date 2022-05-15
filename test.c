@@ -74,7 +74,7 @@ void render (void)
 		matrix4 projection_matrix = {
 			aspect_ratio * f, 0, 0, 0,
 			0, f, 0, 0,
-			0, 0, l, -l * znear,
+			0, 0, 1, 0,
 			0, 0, 0, 1
 		};
 

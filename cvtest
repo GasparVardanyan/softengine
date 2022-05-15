@@ -1,6 +1,6 @@
 #!/bin/sh
-gcc -std=c18 -pedantic-errors -Werror=pedantic -I./softengine/inc ./softengine/lib/*.c test.c -c
-[ ! -f cvtest.o ] &&
-	g++ -std=c++17 -pedantic-errors -Werror=pedantic $(pkgconf -cflags -libs opencv4) cvtest.cpp -c
-g++ $(pkgconf -libs opencv4) *.o
+gcc -std=c18 -pedantic-errors -Werror=pedantic -I./softengine/inc ./softengine/lib/*.c test.c -c			&& \
+( [ -f cvtest.o ] || \
+	g++ -std=c++17 -pedantic-errors -Werror=pedantic $(pkgconf -cflags -libs opencv4) cvtest.cpp -c )		&& \
+g++ $(pkgconf -libs opencv4) *.o																			&& \
 ./a.out

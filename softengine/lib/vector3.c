@@ -7,10 +7,11 @@ const struct vector3 VECTOR3_ZERO = { 0 };
 
 struct vector3 vector3_transform (struct vector3 v, struct matrix4 m)
 {
+	scalar_t w = v.x * m._x + v.y * m._y + v.z * m._z + m._w;
 	return (struct vector3) {
-		v.x * m.m00 + v.y * m.m01 + v.z * m.m02 + m.m30,
-		v.x * m.m10 + v.y * m.m11 + v.z * m.m12 + m.m31,
-		v.x * m.m20 + v.y * m.m21 + v.z * m.m22 + m.m32
+		(v.x * m.xx + v.y * m.yx + v.z * m.zx + m.tx) / w,
+		(v.x * m.xy + v.y * m.yy + v.z * m.zy + m.ty) / w,
+		(v.x * m.xz + v.y * m.yz + v.z * m.zz + m.tz) / w
 	};
 }
 

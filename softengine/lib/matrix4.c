@@ -11,39 +11,57 @@ const struct matrix4 MATRIX4_ZERO = { 0 };
 struct matrix4 MATRIX4_TRANSLATION (scalar_t x, scalar_t y, scalar_t z)
 {
 	return (struct matrix4) {
-		.m00 = 1, .m11 = 1, .m22 = 1, .m33 = 1,
-		.m30 = x, .m31 = y, .m32 = z
+		.xx = 1, .yy = 1, .zz = 1, ._w = 1,
+		.tx = x, .ty = y, .tz = z
 	};
 }
 
 struct matrix4 MATRIX4_ROTATIONX (scalar_t a)
 {
+	scalar_t c = cos (a), s = sin (a);
 	return (struct matrix4) {
-		1, 0, 0, 0,
-		0, cos (a), -sin (a), 0,
-		0, sin (a), cos (a), 0,
-		0, 0, 0, 1
+		 1,  0,  0,  0,
+		 0,  c,  s,  0,
+		 0, -s,  c,  0,
+		 0,  0,  0,  1,
 	};
+	/* return (struct matrix4) { */
+	/*     .xx = 1, ._w = 1, */
+	/*     .yy = c, .zy = -s, */
+	/*     .yz = s, .zz = c */
+	/* }; */
 }
 
 struct matrix4 MATRIX4_ROTATIONY (scalar_t a)
 {
+	scalar_t c = cos (a), s = sin (a);
 	return (struct matrix4) {
-		cos (a), 0, sin (a), 0,
-		0, 1, 0, 0,
-		-sin (a), 0, cos (a), 0,
-		0, 0, 0, 1
+		 c,  0, -s,  0,
+		 0,  1,  0,  0,
+		 s,  0,  c,  0,
+		 0,  0,  0,  1,
 	};
+	/* return (struct matrix4) { */
+	/*     .yy = 1, ._w = 1, */
+	/*     .xx = c, .zx = s, */
+	/*     .xz = -s, .zz = c */
+	/* }; */
 }
 
 struct matrix4 MATRIX4_ROTATIONZ (scalar_t a)
 {
+	scalar_t c = cos (a), s = sin (a);
 	return (struct matrix4) {
-		cos (a), -sin (a), 0, 0,
-		sin (a), cos (a), 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
+		 c,  s,  0,  0,
+		-s,  c,  0,  0,
+		 0,  0,  1,  0,
+		 0,  0,  0,  1,
 	};
+	/* return (struct matrix4) { */
+	/*     .yy = 1, ._w = 1, */
+	/*     .xx = c, .zx = s, */
+	/*     .xz = -s, .zz = c */
+	/* }; */
 }
 
 struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)
@@ -79,14 +97,13 @@ struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)
 		m1.m30 * m2.m02 + m1.m31 * m2.m12 + m1.m32 * m2.m22 + m1.m33 * m2.m32,
 		m1.m30 * m2.m03 + m1.m31 * m2.m13 + m1.m32 * m2.m23 + m1.m33 * m2.m33
 	};
-
 }
 
 struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scalar_t z)
 {
-	m.m30 = x;
-	m.m31 = y;
-	m.m32 = z;
+	m.tx = x;
+	m.ty = y;
+	m.tz = z;
 
 	return m;
 }

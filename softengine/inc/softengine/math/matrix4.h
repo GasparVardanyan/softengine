@@ -16,6 +16,15 @@ struct matrix4
 				m30, m31, m32, m33
 			;
 		};
+		struct
+		{
+			scalar_t
+				xx, xy, xz, _x,
+				yx, yy, yz, _y,
+				zx, zy, zz, _z,
+				tx, ty, tz, _w
+			;
+		};
 		scalar_t m [16];
 	};
 };

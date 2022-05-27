@@ -1,6 +1,6 @@
 # include <math.h>
 
-# include "softengine/math/matrix4.h"
+# include "softengine/math.h"
 
 const struct matrix4 MATRIX4_IDENTITY = {
 	.m00 = 1, .m11 = 1, .m22 = 1, .m33 = 1
@@ -11,7 +11,7 @@ const struct matrix4 MATRIX4_ZERO = { 0 };
 struct matrix4 MATRIX4_TRANSLATION (scalar_t x, scalar_t y, scalar_t z)
 {
 	return (struct matrix4) {
-		.xx = 1, .yy = 1, .zz = 1, ._w = 1,
+		.xx = 1, .yy = 1, .zz = 1, .tw = 1,
 		.tx = x, .ty = y, .tz = z
 	};
 }
@@ -26,7 +26,7 @@ struct matrix4 MATRIX4_ROTATIONX (scalar_t a)
 		 0,  0,  0,  1,
 	};
 	/* return (struct matrix4) { */
-	/*     .xx = 1, ._w = 1, */
+	/*     .xx = 1, .tw = 1, */
 	/*     .yy = c, .zy = -s, */
 	/*     .yz = s, .zz = c */
 	/* }; */
@@ -42,7 +42,7 @@ struct matrix4 MATRIX4_ROTATIONY (scalar_t a)
 		 0,  0,  0,  1,
 	};
 	/* return (struct matrix4) { */
-	/*     .yy = 1, ._w = 1, */
+	/*     .yy = 1, .tw = 1, */
 	/*     .xx = c, .zx = s, */
 	/*     .xz = -s, .zz = c */
 	/* }; */
@@ -58,7 +58,7 @@ struct matrix4 MATRIX4_ROTATIONZ (scalar_t a)
 		 0,  0,  0,  1,
 	};
 	/* return (struct matrix4) { */
-	/*     .yy = 1, ._w = 1, */
+	/*     .yy = 1, .tw = 1, */
 	/*     .xx = c, .zx = s, */
 	/*     .xz = -s, .zz = c */
 	/* }; */

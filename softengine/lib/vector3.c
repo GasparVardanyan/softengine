@@ -1,4 +1,4 @@
-# include "softengine/math/vector3.h"
+# include "softengine/math.h"
 
 const struct vector3 VECTOR3_X = { .x = 1 };
 const struct vector3 VECTOR3_Y = { .y = 1 };
@@ -7,7 +7,7 @@ const struct vector3 VECTOR3_ZERO = { 0 };
 
 struct vector3 vector3_transform (struct vector3 v, struct matrix4 m)
 {
-	scalar_t w = v.x * m._x + v.y * m._y + v.z * m._z + m._w;
+	scalar_t w = v.x * m.xw + v.y * m.yw + v.z * m.zw + m.tw;
 	return (struct vector3) {
 		(v.x * m.xx + v.y * m.yx + v.z * m.zx + m.tx) / w,
 		(v.x * m.xy + v.y * m.yy + v.z * m.zy + m.ty) / w,

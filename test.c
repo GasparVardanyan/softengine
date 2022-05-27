@@ -2,13 +2,14 @@
 # include <stdio.h>
 
 # include "softengine/math.h"
+# include "softengine/utils.h"
 
 # define PI 3.141592653589793l
 
 
 
 const int view_width = 640;
-const int view_height = 640;
+const int view_height = 460;
 
 extern void put_pixel (int x, int y, unsigned char r, unsigned char g, unsigned char b);
 
@@ -47,8 +48,6 @@ int mesh_faces [12] [3] = {
 	{ 4, 6, 7 }
 };
 
-void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, unsigned char r, unsigned char g, unsigned char b);
-
 void print_matrix (matrix4 m);
 
 void init (void)
@@ -72,7 +71,6 @@ void init (void)
 
 int render (void)
 {
-
 	rotx += .005;
 	roty += .005;
 
@@ -142,28 +140,12 @@ int render (void)
 		scalar_t * v2 = mesh_vertices_projected [mesh_faces [i] [1]];
 		scalar_t * v3 = mesh_vertices_projected [mesh_faces [i] [2]];
 
-		draw_line (v1 [0], v1 [1], v2 [0], v2 [1], 0, 0xff, 0);
-		draw_line (v2 [0], v2 [1], v3 [0], v3 [1], 0, 0xff, 0);
-		draw_line (v3 [0], v3 [1], v1 [0], v1 [1], 0, 0xff, 0);
+		draw_line (v1 [0], v1 [1], v2 [0], v2 [1], 0, 0xff, 0, view_width, view_height, & put_pixel);
+		draw_line (v2 [0], v2 [1], v3 [0], v3 [1], 0, 0xff, 0, view_width, view_height, & put_pixel);
+		draw_line (v3 [0], v3 [1], v1 [0], v1 [1], 0, 0xff, 0, view_width, view_height, & put_pixel);
 	}
 
 	return 0;
-}
-
-void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, unsigned char r, unsigned char g, unsigned char b)
-{
-	scalar_t d = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-
-	if (d < 4) return;
-
-	scalar_t x = x1 + (x2 - x1) / 2;
-	scalar_t y = y1 + (y2 - y1) / 2;
-
-	if (x > 0 && y > 0 && x < view_width && y < view_height)
-		put_pixel ((int) x, (int) y, r, g, b);
-
-	draw_line (x1, y1, x, y, r, g, b);
-	draw_line (x, y, x2, y2, r, g, b);
 }
 
 void print_matrix (matrix4 m)

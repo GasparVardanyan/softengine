@@ -1,3 +1,4 @@
+# include <chrono>
 # include <fstream>
 # include <memory>
 
@@ -39,11 +40,16 @@ int main ()
 
 	rootContainer.addChild (monkey);
 
+	int fps = 0; // loop's fps, not camera's :d
+
+	std::chrono::steady_clock::time_point beg = std::chrono::steady_clock::now ();
+
 	while (true)
 	{
 		camera.render (& rootContainer);
+
 		cv::imshow ("softengine", scene);
-		// if (!s) scene.setTo (background);
+
 		char key = cv::waitKey (1);
 		if (key == 'q')
 			break;
@@ -51,6 +57,17 @@ int main ()
 		// box -> rotation.x += .005;
 		// box -> rotation.y += .005;
 		monkey -> rotation.y += .005;
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now ();
+
+		if (std::chrono::duration_cast <std::chrono::nanoseconds> (end - beg).count () >= 1e9l)
+		{
+			beg = std::chrono::steady_clock::now ();
+			std::cout << fps << std::endl;
+			fps = 0;
+		}
+		else
+			fps++;
 	}
 
 	cv::destroyAllWindows ();

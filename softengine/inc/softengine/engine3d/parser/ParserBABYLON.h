@@ -15,6 +15,7 @@ public:
 	static Object3D * parse (const Json::Value & data)
 	{
 		Object3D * container = new Object3D;
+
 		for (auto mesh : data ["meshes"])
 		{
 			auto m = new Mesh;
@@ -58,6 +59,7 @@ public:
 
 			container -> addChild (m);
 		}
+
 		return container;
 	}
 };

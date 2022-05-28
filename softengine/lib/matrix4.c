@@ -77,10 +77,10 @@ struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl)
 		matrix4_mul (
 			MATRIX4_SCALE (scl.x, scl.y, scl.z),
 			matrix4_mul (
-				MATRIX4_ROTATIONX (rot.x),
+				MATRIX4_ROTATIONZ (rot.z),
 				matrix4_mul (
-					MATRIX4_ROTATIONY (rot.y),
-					MATRIX4_ROTATIONZ (rot.z)
+					MATRIX4_ROTATIONX (rot.x),
+					MATRIX4_ROTATIONY (rot.y)
 				)
 			)
 		),

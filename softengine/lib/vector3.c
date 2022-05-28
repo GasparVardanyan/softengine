@@ -21,3 +21,8 @@ struct vector3 vector3_scale (struct vector3 v, scalar_t s)
 		v.x / s, v.y / s, v.z / s
 	};
 }
+
+struct vector3 vector3_negative (struct vector3 v)
+{
+	return (vector3) {-v.x, -v.y, -v.z};
+}

@@ -141,7 +141,7 @@ _Bool matrix4_equals (matrix4 a, matrix4 b)
 	return 1;
 }
 
-struct matrix4 perspective_projection (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio)
+struct matrix4 perspective_projector (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio)
 {
 	const scalar_t f = (scalar_t) 1 / tan (fov / 2);
 	const scalar_t l = zfar / (zfar - znear);

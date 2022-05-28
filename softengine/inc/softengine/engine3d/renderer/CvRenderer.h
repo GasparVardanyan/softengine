@@ -3,8 +3,8 @@
 
 # include <opencv2/highgui.hpp>
 
+# include "IRenderer.h"
 # include "softengine/math.h"
-# include "softengine/engine3d/utils/IRenderer.h"
 
 class CvRenderer : public IRenderer
 {

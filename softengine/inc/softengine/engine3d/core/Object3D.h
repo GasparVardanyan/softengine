@@ -1,8 +1,8 @@
 # ifndef __SOFTENGINE_CORE_OBJECT3D_H
 # define __SOFTENGINE_CORE_OBJECT3D_H
 
-# include <vector>
 # include <memory>
+# include <vector>
 
 # include "softengine/math.h"
 
@@ -16,13 +16,17 @@ public:
 
 	std::vector <std::shared_ptr <Object3D>> children;
 
-	void addChild (Object3D * obj);
-
 	Object3D () :
 		position ({0, 0, 0}),
 		rotation ({0, 0, 0}),
 		scale ({1, 1, 1})
 	{};
+
+	void addChild (Object3D * obj)
+	{
+		children.push_back (std::shared_ptr <Object3D> (obj));
+	}
+
 	virtual ~Object3D () {}
 };
 

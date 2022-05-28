@@ -27,6 +27,7 @@ extern const struct vector3 VECTOR3_ZERO;
 
 struct vector3 vector3_transform (struct vector3 v, struct matrix4 m);
 struct vector3 vector3_scale (struct vector3 v, scalar_t s);
+struct vector3 vector3_negative (struct vector3 v);
 
 
 
@@ -77,7 +78,7 @@ struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl);
 struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2);
 struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scalar_t z);
 
-struct matrix4 perspective_projection (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio);
+struct matrix4 perspective_projector (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio);
 
 _Bool matrix4_equals (matrix4 a, matrix4 b);
 

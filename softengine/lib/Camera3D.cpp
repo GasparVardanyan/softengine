@@ -1,12 +1,15 @@
+# include <utility>
+# include <vector>
+
 # include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/math.h"
 
-# include <vector>
-# include <utility>
-
 void Camera3D :: draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, unsigned char r, unsigned char g, unsigned char b)
 {
+	// TODO: https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+	// TODO: https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
+
 	scalar_t d = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
 
 	if (d < 4) return;
@@ -29,16 +32,22 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 	if (matrix4_equals (transform, MATRIX4_ZERO))
 	{
 		renderer -> clear ();
-		transform = MATRIX4_TRANSFORM (position, rotation, scale);
+
+		transform = MATRIX4_TRANSFORM (
+			vector3_negative (position),
+			vector3_negative (rotation),
+			(vector3) {1, 1, 1}
+		);
 	}
 
-	// p2 * cam
-	// p1 * p2 * cam
-	// obj * p1 * p2 * cam
-	//   obj * p1 * p2 * cam * pr
-
-
-	transform = matrix4_mul (MATRIX4_TRANSFORM (container -> position, container -> rotation, container -> scale), transform);
+	transform = matrix4_mul (
+		MATRIX4_TRANSFORM (
+			container -> position,
+			container -> rotation,
+			container -> scale
+		),
+		transform
+	);
 
 	matrix4 draw_matrix = matrix4_mul (transform, projector);
 
@@ -63,8 +72,8 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 
 			vertices_projected.push_back ({vert.x, vert.y});
 
-			// if (vert.x > 0 && vert.y > 0 && vert.x < view_width && vert.y < view_height)
-			//     renderer -> draw ((int) vert.x, (int) vert.y, 0xff, 0, 0);
+			if (vert.x > 0 && vert.y > 0 && vert.x < view_width && vert.y < view_height)
+				renderer -> draw ((int) vert.x, (int) vert.y, 0xff, 0, 0);
 		}
 
 		for (auto f : m -> geometry.faces)

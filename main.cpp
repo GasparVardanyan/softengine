@@ -1,9 +1,11 @@
+# include <fstream>
 # include <memory>
 
-# include "softengine/engine3d/core/Object3D.h"
 # include "softengine/engine3d/core/Camera3D.h"
+# include "softengine/engine3d/core/Object3D.h"
+# include "softengine/engine3d/parser/ParserBABYLON.h"
 # include "softengine/engine3d/primitives/Box.h"
-# include "softengine/engine3d/utils/CvRenderer.h"
+# include "softengine/engine3d/renderer/CvRenderer.h"
 
 # define PI 3.141592653589793l
 
@@ -17,14 +19,25 @@ int main ()
 
 	Object3D rootContainer;
 	Camera3D camera;
-	camera.projector = perspective_projection (45 * PI / 180, 0.1, 100.0, (scalar_t) view_height / view_width);
+	camera.projector = perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width);
 	camera.renderer = std::shared_ptr <CvRenderer> (new CvRenderer (& scene, cv::Scalar (0x66, 0x44, 0x22)));
 
-	Box * box = new Box ();
-	box -> position.z = 15;
-	box -> scale.x = 1.5;
-	// print_matrix (box -> transform);
-	rootContainer.addChild (box);
+	// Box * box = new Box ();
+	// box -> position.z = 15;
+	// box -> scale.x = 2;
+	// box -> scale.y = .5;
+	// rootContainer.addChild (box);
+
+	std::ifstream monbab ("monkey.babylon", std::ifstream::binary);
+	Json::Value monbin;
+	monbab >> monbin;
+
+	Object3D * monkey = ParserBABYLON::parse (monbin);
+
+	monkey -> position.z = 7;
+	monkey -> rotation.z = PI;
+
+	rootContainer.addChild (monkey);
 
 	while (true)
 	{
@@ -35,8 +48,9 @@ int main ()
 		if (key == 'q')
 			break;
 
-		box -> rotation.x += .005;
-		box -> rotation.y += .005;
+		// box -> rotation.x += .005;
+		// box -> rotation.y += .005;
+		monkey -> rotation.y += .005;
 	}
 
 	cv::destroyAllWindows ();

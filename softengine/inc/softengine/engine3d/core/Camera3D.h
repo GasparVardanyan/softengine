@@ -3,9 +3,9 @@
 
 # include <memory>
 
-# include "softengine/math.h"
-# include "softengine/engine3d/utils/IRenderer.h"
 # include "softengine/engine3d/core/Object3D.h"
+# include "softengine/engine3d/renderer/IRenderer.h"
+# include "softengine/math.h"
 
 class Camera3D : public Object3D
 {

@@ -40,5 +40,4 @@ public:
 	}
 };
 
-
 # endif // __SOFTENGINE_UTILS_CVRENDERER_H

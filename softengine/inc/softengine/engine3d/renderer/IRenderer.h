@@ -15,5 +15,4 @@ public:
 	virtual int canvas_height () =0;
 };
 
-
 # endif // __SOFTENGINE_UTILS_IRENDERER_H

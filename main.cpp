@@ -1,6 +1,9 @@
 # include <chrono>
 # include <fstream>
+# include <iostream>
 # include <memory>
+
+# include <opencv2/highgui.hpp>
 
 # include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/core/Object3D.h"

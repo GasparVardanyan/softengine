@@ -56,17 +56,9 @@ void init (void)
 	const scalar_t fov = 45 * PI / 180;
 	const scalar_t zfar = 100.0, znear = 0.1;
 
-	const scalar_t f = (scalar_t) 1 / tan (fov / 2);
-	const scalar_t l = zfar / (zfar - znear);
-
 	view_matrix = MATRIX4_IDENTITY;
 
-	projection_matrix = (matrix4) {
-		a * f, 0, 0, 0,
-		0, f, 0, 0,
-		0, 0, l, 1,
-		0, 0, -znear * l, 0
-	};
+	projection_matrix = perspective_projection (fov, znear, zfar, a);
 }
 
 int render (void)

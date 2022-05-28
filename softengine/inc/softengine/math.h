@@ -71,9 +71,15 @@ struct matrix4 MATRIX4_TRANSLATION (scalar_t x, scalar_t y, scalar_t z);
 struct matrix4 MATRIX4_ROTATIONX (scalar_t a);
 struct matrix4 MATRIX4_ROTATIONY (scalar_t a);
 struct matrix4 MATRIX4_ROTATIONZ (scalar_t a);
+struct matrix4 MATRIX4_SCALE (scalar_t x, scalar_t y, scalar_t z);
+struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl);
 
 struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2);
 struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scalar_t z);
+
+struct matrix4 perspective_projection (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio);
+
+_Bool matrix4_equals (matrix4 a, matrix4 b);
 
 
 

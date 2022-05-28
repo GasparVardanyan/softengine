@@ -64,6 +64,30 @@ struct matrix4 MATRIX4_ROTATIONZ (scalar_t a)
 	/* }; */
 }
 
+struct matrix4 MATRIX4_SCALE (scalar_t x, scalar_t y, scalar_t z)
+{
+	return (struct matrix4) {
+		.xx = x, .yy = y, .zz = z, .tw = 1
+	};
+}
+
+struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl)
+{
+	return matrix4_mul (
+		matrix4_mul (
+			MATRIX4_SCALE (scl.x, scl.y, scl.z),
+			matrix4_mul (
+				MATRIX4_ROTATIONX (rot.x),
+				matrix4_mul (
+					MATRIX4_ROTATIONY (rot.y),
+					MATRIX4_ROTATIONZ (rot.z)
+				)
+			)
+		),
+		MATRIX4_TRANSLATION (pos.x, pos.y, pos.z)
+	);
+}
+
 struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)
 {
 	/* struct matrix4 m; */
@@ -106,4 +130,26 @@ struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scal
 	m.tz = z;
 
 	return m;
+}
+
+_Bool matrix4_equals (matrix4 a, matrix4 b)
+{
+	for (int i = 0; i < 16; i++)
+		if (a.m [i] != b.m [i])
+			return 0;
+
+	return 1;
+}
+
+struct matrix4 perspective_projection (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio)
+{
+	const scalar_t f = (scalar_t) 1 / tan (fov / 2);
+	const scalar_t l = zfar / (zfar - znear);
+
+	return (struct matrix4) {
+		aspect_ratio * f, 0, 0, 0,
+		0, f, 0, 0,
+		0, 0, l, 1,
+		0, 0, -znear * l, 0
+	};
 }

@@ -9,7 +9,7 @@
 class Box : public Mesh
 {
 public:
-	Box ();
+	Box (scalar_t width = 1, scalar_t height = 1, scalar_t length = 1, matrix4 transform = {0});
 };
 
 # endif // __SOFTENGINE_PRIMITIVES_BOX_H

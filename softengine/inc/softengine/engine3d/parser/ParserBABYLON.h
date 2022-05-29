@@ -8,7 +8,7 @@
 class ParserBABYLON
 {
 public:
-	static Object3D * parse (const Json::Value & data);
+	static Object3D * parse (const Json::Value & data, matrix4 transform = {0});
 };
 
 # endif // __SOFTENGINE_PARSER_BABYLON_H

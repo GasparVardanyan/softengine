@@ -5,7 +5,7 @@
 # include "softengine/engine3d/parser/ParserBABYLON.h"
 # include "softengine/math.h"
 
-Object3D * ParserBABYLON::parse (const Json::Value & data)
+Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 {
 	Object3D * container = new Object3D;
 
@@ -36,6 +36,10 @@ Object3D * ParserBABYLON::parse (const Json::Value & data)
 				mesh ["vertices"] [i + 1].asDouble (),
 				mesh ["vertices"] [i + 2].asDouble ()
 			});
+
+		if (!matrix4_equals (transform, {0}))
+			for (auto & v : m -> geometry.vertices)
+				v = vector3_transform (v, transform);
 
 		for (int i = 0; i < ic; i += 3)
 			m -> geometry.faces.push_back ({

@@ -26,24 +26,23 @@ int main ()
 	camera.projector = perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width);
 	camera.renderer = std::shared_ptr <CvRenderer> (new CvRenderer (& scene, cv::Scalar (0x66, 0x44, 0x22)));
 
-	// Box * box = new Box ();
+	// Box * box = new Box (2, 2, 2, MATRIX4_ROTATIONY (45 * PI / 180));
 	// box -> position.z = 15;
-	// box -> scale.x = 2;
-	// box -> scale.y = .5;
+	// // box -> rotation.x = -15 * PI / 180;
 	// rootContainer.addChild (box);
 
 	std::ifstream monbab ("monkey.babylon", std::ifstream::binary);
 	Json::Value monbin;
 	monbab >> monbin;
 
-	Object3D * monkey = ParserBABYLON::parse (monbin);
+	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1.5, 1, 1));
 
 	monkey -> position.z = 7;
 	monkey -> rotation.z = PI;
 
 	rootContainer.addChild (monkey);
 
-	int fps = 0; // loop's fps, not camera's :d
+	int fps = 0; // loop's fps, not the camera's :d
 
 	std::chrono::steady_clock::time_point beg = std::chrono::steady_clock::now ();
 
@@ -59,7 +58,7 @@ int main ()
 
 		// box -> rotation.x += .005;
 		// box -> rotation.y += .005;
-		monkey -> rotation.y += .005;
+		monkey -> rotation.y += .01;
 
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now ();
 

@@ -43,9 +43,9 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 
 		for (int i = 0; i < ic; i += 3)
 			m -> geometry.faces.push_back ({
-				(scalar_t) mesh ["indices"] [i].asInt (),
-				(scalar_t) mesh ["indices"] [i + 1].asInt (),
-				(scalar_t) mesh ["indices"] [i + 2].asInt (),
+				mesh ["indices"] [i].asInt (),
+				mesh ["indices"] [i + 1].asInt (),
+				mesh ["indices"] [i + 2].asInt (),
 			});
 
 		m -> position = {

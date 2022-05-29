@@ -10,7 +10,7 @@
 class Camera3D : public Object3D
 {
 protected:
-	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, unsigned char r, unsigned char g, unsigned char b);
+	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c);
 
 public:
 	matrix4 projector;

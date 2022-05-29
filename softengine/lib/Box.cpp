@@ -6,7 +6,7 @@ Box::Box (scalar_t width, scalar_t height, scalar_t length, matrix4 transform)
 	scalar_t _h = height / 2;
 	scalar_t _l = length / 2;
 
-	this -> geometry.vertices = std::vector <vector3>
+	this -> geometry.vertices = std::vector <vertex>
 	{
 		{-_w,  _l,  _h},
 		{ _w,  _l,  _h},
@@ -22,7 +22,7 @@ Box::Box (scalar_t width, scalar_t height, scalar_t length, matrix4 transform)
 		for (auto & v : this -> geometry.vertices)
 			v = vector3_transform (v, transform);
 
-	this -> geometry.faces = std::vector <vector3>
+	this -> geometry.faces = std::vector <face>
 	{
 		{ 0, 1, 2 },
 		{ 1, 2, 3 },

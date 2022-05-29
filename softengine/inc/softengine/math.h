@@ -9,9 +9,33 @@ typedef long double scalar_t;
 
 struct vector3;
 struct matrix4;
+struct color4;
+struct face;
 
 typedef struct vector3 vector3;
 typedef struct matrix4 matrix4;
+typedef struct color4 color4;
+typedef struct vector3 vertex;
+typedef struct face face;
+typedef struct point point;
+
+
+
+struct color4
+{
+	unsigned char r, g, b;
+	scalar_t a;
+};
+
+struct face
+{
+	int v1, v2, v3;
+};
+
+struct point
+{
+	int x, y;
+};
 
 
 

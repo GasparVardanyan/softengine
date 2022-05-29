@@ -1,5 +1,5 @@
-# ifndef __SOFTENGINE_UTILS_CVRENDERER_H
-# define __SOFTENGINE_UTILS_CVRENDERER_H
+# ifndef __SOFTENGINE_RENDERER_CVRENDERER_H
+# define __SOFTENGINE_RENDERER_CVRENDERER_H
 
 # include <opencv2/highgui.hpp>
 
@@ -19,9 +19,9 @@ public:
 		this -> canvas = canvas;
 	}
 
-	virtual void draw (int x, int y, unsigned char r, unsigned char g, unsigned char b)
+	virtual void draw (point p, color4 c)
 	{
-		this -> canvas -> at <cv::Vec3b> (cv::Point (x, y)) = {b, g, r};
+		this -> canvas -> at <cv::Vec3b> (cv::Point (p.x, p.y)) = {c.b, c.g, c.r};
 	};
 
 	virtual void clear ()
@@ -40,4 +40,4 @@ public:
 	}
 };
 
-# endif // __SOFTENGINE_UTILS_CVRENDERER_H
+# endif // __SOFTENGINE_RENDERER_CVRENDERER_H

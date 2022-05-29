@@ -35,7 +35,7 @@ int main ()
 	Json::Value monbin;
 	monbab >> monbin;
 
-	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1.5, 1, 1));
+	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1, 1, 1));
 
 	monkey -> position.z = 7;
 	monkey -> rotation.z = PI;

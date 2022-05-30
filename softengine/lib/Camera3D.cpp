@@ -69,48 +69,95 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 			vector3 vert = vector3_transform (v, draw_matrix);
 
 			vert.x = (vert.x + .5) * view_width;
-			vert.y = (vert.y + .5) * view_height;
+			vert.y = (-vert.y + .5) * view_height;
 
 			vertices_projected.push_back ({(int) vert.x, (int) vert.y});
-
-			if (vert.x > 0 && vert.y > 0 && vert.x < view_width && vert.y < view_height)
-				renderer -> draw ({(int) vert.x, (int) vert.y}, {0xff, 0, 0});
 		}
 
-		for (auto f : m -> geometry.faces)
+		for (const auto & f : m -> geometry.faces)
 		{
-			auto v1 = vertices_projected [f.v1];
-			auto v2 = vertices_projected [f.v2];
-			auto v3 = vertices_projected [f.v3];
+			const auto * v1 = & vertices_projected [f.v1];
+			const auto * v2 = & vertices_projected [f.v2];
+			const auto * v3 = & vertices_projected [f.v3];
 
-
-
-			// triangles:
-
-			if (v2.y < v1.y)
+			if (v2 -> y < v1 -> y)
 				std::swap (v1, v2);
-			if (v3.y < v1.y)
+			if (v3 -> y < v1 -> y)
 				std::swap (v1, v3);
-			if (v3.y < v2.y)
+			if (v3 -> y < v2 -> y)
 				std::swap (v2, v3);
 
-			if (v1.y > v2.y || v2.y > v3.y) std::cout << "FFFFFFFF" << std::endl;
+			// v1 - top, v2 - mid, v3 - bot
 
-			auto * vl = & v2;
-			auto * vr = & v3;
+			int yd32 = v3 -> y - v2 -> y;
+			int yd31 = v3 -> y - v1 -> y;
+			int yd21 = v2 -> y - v1 -> y;
 
-			if (vl -> x > vr -> x)
-				std::swap (vl, vr);
+			if (yd31)
+			{
+				if (yd21)
+					for (int y = v1 -> y; y < v2 -> y; y++)
+					{
+						int sx = v1 -> x + (v3 -> x - v1 -> x) * (y - v1 -> y) / yd31;
+						int ex = v1 -> x + (v2 -> x - v1 -> x) * (y - v1 -> y) / yd21;
 
-			scalar_t sl = (v1.y - vl -> y) / (v1.x - vl -> x);
-			scalar_t sr = (v1.y - vr -> y) / (v1.x - vr -> x);
+						if (sx > ex) std::swap (sx, ex);
 
-# if 1
+						for (int x = sx; x <= ex; x++)
+							if (x > 0 && y > 0 && x < view_width && y < view_height)
+								renderer -> draw ({x, y}, {0, 0, 0});
+					}
+
+				if (yd32)
+					for (int y = v2 -> y; y <= v3 -> y; y++)
+					{
+						int sx = v1 -> x + (v3 -> x - v1 -> x) * (y - v1 -> y) / yd31;
+						int ex = v3 -> x + (v2 -> x - v3 -> x) * (v3 -> y - y) / yd32;
+
+						if (sx > ex) std::swap (sx, ex);
+
+						for (int x = sx; x <= ex; x++)
+							if (x > 0 && y > 0 && x < view_width && y < view_height)
+								renderer -> draw ({x, y}, {0, 0, 0});
+					}
+			}
+			else
+			{
+				int sx = v1 -> x;
+				if (sx > v2 -> x)
+					sx = v2 -> x;
+				if (sx > v3 -> x)
+					sx = v3 -> x;
+
+				int ex = v1 -> x;
+				if (ex < v2 -> x)
+					ex = v2 -> x;
+				if (ex < v3 -> x)
+					ex = v3 -> x;
+
+				int y = v1 -> y;
+
+				for (int x = sx; x <= ex; x++)
+					if (x > 0 && y > 0 && x < view_width && y < view_height)
+						renderer -> draw ({x, y}, {0, 0, 0});
+			}
+		}
+
+		for (const auto & f : m -> geometry.faces)
+		{
+			break;
+			const auto & v1 = vertices_projected [f.v1];
+			const auto & v2 = vertices_projected [f.v2];
+			const auto & v3 = vertices_projected [f.v3];
+
 			draw_line (v1.x, v1.y, v2.x, v2.y, {0, 0xff, 0});
 			draw_line (v2.x, v2.y, v3.x, v3.y, {0, 0xff, 0});
 			draw_line (v3.x, v3.y, v1.x, v1.y, {0, 0xff, 0});
-# endif
 		}
+
+		for (auto v : vertices_projected)
+			if (v.x > 0 && v.y > 0 && v.x < view_width && v.y < view_height)
+				renderer -> draw ({v.x, v.y}, {0xff, 0, 0});
 	}
 
 	for (auto obj : container -> children)

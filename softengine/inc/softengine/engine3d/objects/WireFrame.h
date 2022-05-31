@@ -7,7 +7,6 @@
 class WireFrame : public Object3D
 {
 public:
-	color4 vertex_color;
 	color4 color;
 };
 

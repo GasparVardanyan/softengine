@@ -19,6 +19,9 @@ typedef struct vector3 vertex;
 typedef struct face face;
 typedef struct point point;
 
+scalar_t clamp (scalar_t value, scalar_t min, scalar_t max);
+scalar_t interpolate (scalar_t min, scalar_t max, scalar_t gradient);
+
 
 
 struct color4
@@ -35,6 +38,7 @@ struct face
 struct point
 {
 	int x, y;
+	scalar_t _z;
 };
 
 

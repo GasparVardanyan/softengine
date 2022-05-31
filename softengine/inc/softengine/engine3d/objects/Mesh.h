@@ -6,7 +6,10 @@
 
 class Mesh : public Object3D
 {
-public:
+	friend class Camera3D;
+	friend class ParserBABYLON;
+
+protected:
 	Geometry geometry;
 };
 

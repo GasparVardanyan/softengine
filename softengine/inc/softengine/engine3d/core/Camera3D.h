@@ -12,9 +12,15 @@ class Camera3D : public Object3D
 protected:
 	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c);
 
-public:
 	matrix4 projector;
 	std::shared_ptr <IRenderer> renderer;
+
+public:
+	Camera3D (matrix4 projector, std::shared_ptr <IRenderer> renderer)
+		: projector (projector)
+		, renderer (renderer)
+	{}
+
 	void render (Object3D * container, matrix4 transform = MATRIX4_ZERO);
 };
 

@@ -30,23 +30,28 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 		int vc = mesh ["vertices"].size ();
 		int ic = mesh ["indices"].size ();
 
-		for (int i = 0; i < vc; i += verticesStep)
-			m -> geometry.vertices.push_back ({
-				mesh ["vertices"] [i].asDouble (),
-				mesh ["vertices"] [i + 1].asDouble (),
-				mesh ["vertices"] [i + 2].asDouble ()
-			});
+		m -> geometry.create (vc / verticesStep, ic / 3);
+
+		for (int i = 0, j = 0; i < vc; i += verticesStep, j++)
+		{
+			m -> geometry.vertices [j].x = mesh ["vertices"] [i].asDouble ();
+			m -> geometry.vertices [j].y = mesh ["vertices"] [i + 1].asDouble ();
+			m -> geometry.vertices [j].z = mesh ["vertices"] [i + 2].asDouble ();
+		}
 
 		if (!matrix4_equals (transform, {0}))
-			for (auto & v : m -> geometry.vertices)
-				v = vector3_transform (v, transform);
+			for (int i = 0; i < m -> geometry.num_vertices; i++)
+				m -> geometry.vertices [i] = vector3_transform (
+					m -> geometry.vertices [i],
+					transform
+				);
 
-		for (int i = 0; i < ic; i += 3)
-			m -> geometry.faces.push_back ({
-				mesh ["indices"] [i].asInt (),
-				mesh ["indices"] [i + 1].asInt (),
-				mesh ["indices"] [i + 2].asInt (),
-			});
+		for (int i = 0, j = 0; i < ic; i += 3, j++)
+		{
+			m -> geometry.faces [j].v1 = mesh ["indices"] [i].asInt ();
+			m -> geometry.faces [j].v2 = mesh ["indices"] [i + 1].asInt ();
+			m -> geometry.faces [j].v3 = mesh ["indices"] [i + 2].asInt ();
+		}
 
 		m -> position = {
 			mesh ["position"] [0].asDouble (),

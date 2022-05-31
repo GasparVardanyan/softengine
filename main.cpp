@@ -16,8 +16,8 @@
 const int view_width = 640;
 const int view_height = 460;
 
-// # define BOX
-# define MONKEY
+# define BOX
+// # define MONKEY
 
 int main ()
 {
@@ -25,12 +25,11 @@ int main ()
 	cv::Mat scene (cv::Size (view_width, view_height), CV_8UC3, background);
 
 	Object3D rootContainer;
-	Camera3D camera;
-	camera.projector = perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width);
-	camera.renderer = std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background));
+	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
 
 # ifdef BOX
-	Box * box = new Box (2, 2, 2, MATRIX4_ROTATIONY (45 * PI / 180));
+	// Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
+	Box * box = new Box (2, 2, 2);
 	box -> position.z = 15;
 	// box -> rotation.z = 45 * PI / 180;
 
@@ -45,6 +44,7 @@ int main ()
 
 	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1, 1, 1));
 	monkey -> position.z = 7;
+	// monkey -> addChild (box);
 	rootContainer.addChild (monkey);
 # endif // MONKEY
 
@@ -63,7 +63,7 @@ int main ()
 			break;
 
 # ifdef BOX
-		box -> rotation.x += .005;
+		// box -> rotation.x += .005;
 		box -> rotation.y += .005;
 # endif // BOX
 

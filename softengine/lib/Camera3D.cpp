@@ -57,28 +57,26 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 	if (dynamic_cast <Mesh *> (container) != nullptr)
 	{
 		Mesh * m = (Mesh *) container;
-		std::vector <point> vertices_projected;
+		point * vertices_projected = new point [m -> geometry.num_vertices];
 
 		int view_width = renderer -> canvas_width ();
 		int view_height = renderer -> canvas_height ();
 
-
-
-		for (auto v : m -> geometry.vertices)
+		for (int i = 0; i < m -> geometry.num_vertices; i++)
 		{
-			vector3 vert = vector3_transform (v, draw_matrix);
+			vector3 vert = vector3_transform (m -> geometry.vertices [i], draw_matrix);
 
 			vert.x = (vert.x + .5) * view_width;
 			vert.y = (-vert.y + .5) * view_height;
 
-			vertices_projected.push_back ({(int) vert.x, (int) vert.y});
+			vertices_projected [i] = {(int) vert.x, (int) vert.y};
 		}
 
-		for (const auto & f : m -> geometry.faces)
+		for (int i = 0; i < m -> geometry.num_faces; i++)
 		{
-			const auto * v1 = & vertices_projected [f.v1];
-			const auto * v2 = & vertices_projected [f.v2];
-			const auto * v3 = & vertices_projected [f.v3];
+			const point * v1 = vertices_projected + m -> geometry.faces [i].v1;
+			const point * v2 = vertices_projected + m -> geometry.faces [i].v2;
+			const point * v3 = vertices_projected + m -> geometry.faces [i].v3;
 
 			if (v2 -> y < v1 -> y)
 				std::swap (v1, v2);
@@ -121,43 +119,47 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 								renderer -> draw ({x, y}, {0, 0, 0});
 					}
 			}
-			else
-			{
-				int sx = v1 -> x;
-				if (sx > v2 -> x)
-					sx = v2 -> x;
-				if (sx > v3 -> x)
-					sx = v3 -> x;
-
-				int ex = v1 -> x;
-				if (ex < v2 -> x)
-					ex = v2 -> x;
-				if (ex < v3 -> x)
-					ex = v3 -> x;
-
-				int y = v1 -> y;
-
-				for (int x = sx; x <= ex; x++)
-					if (x > 0 && y > 0 && x < view_width && y < view_height)
-						renderer -> draw ({x, y}, {0, 0, 0});
-			}
+			// else
+			// {
+			//     int sx = v1 -> x;
+			//     if (sx > v2 -> x)
+			//         sx = v2 -> x;
+			//     if (sx > v3 -> x)
+			//         sx = v3 -> x;
+			//
+			//     int ex = v1 -> x;
+			//     if (ex < v2 -> x)
+			//         ex = v2 -> x;
+			//     if (ex < v3 -> x)
+			//         ex = v3 -> x;
+			//
+			//     int y = v1 -> y;
+			//
+			//     for (int x = sx; x <= ex; x++)
+			//         if (x > 0 && y > 0 && x < view_width && y < view_height)
+			//             renderer -> draw ({x, y}, {0, 0, 0});
+			// }
 		}
 
-		for (const auto & f : m -> geometry.faces)
+		for (int i = 0; i < m -> geometry.num_faces; i++)
 		{
-			break;
-			const auto & v1 = vertices_projected [f.v1];
-			const auto & v2 = vertices_projected [f.v2];
-			const auto & v3 = vertices_projected [f.v3];
+			const auto & v1 = vertices_projected [m -> geometry.faces [i].v1];
+			const auto & v2 = vertices_projected [m -> geometry.faces [i].v2];
+			const auto & v3 = vertices_projected [m -> geometry.faces [i].v3];
 
 			draw_line (v1.x, v1.y, v2.x, v2.y, {0, 0xff, 0});
 			draw_line (v2.x, v2.y, v3.x, v3.y, {0, 0xff, 0});
 			draw_line (v3.x, v3.y, v1.x, v1.y, {0, 0xff, 0});
 		}
 
-		for (auto v : vertices_projected)
+		for (int i = 0; i < m -> geometry.num_faces; i++)
+		{
+			const point & v = vertices_projected [i];
 			if (v.x > 0 && v.y > 0 && v.x < view_width && v.y < view_height)
 				renderer -> draw ({v.x, v.y}, {0xff, 0, 0});
+		}
+
+		delete [] vertices_projected;
 	}
 
 	for (auto obj : container -> children)

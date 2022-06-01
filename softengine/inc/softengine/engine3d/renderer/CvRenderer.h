@@ -1,6 +1,8 @@
 # ifndef __SOFTENGINE_RENDERER_CVRENDERER_H
 # define __SOFTENGINE_RENDERER_CVRENDERER_H
 
+# include <limits>
+
 # include <opencv2/highgui.hpp>
 
 # include "IRenderer.h"
@@ -8,25 +10,37 @@
 
 class CvRenderer : public IRenderer
 {
-public:
+protected:
 	cv::Mat * canvas;
 	cv::Scalar background;
 
+	scalar_t * depth_buffer;
+public:
 	CvRenderer (cv::Mat * canvas, cv::Scalar background)
 		: IRenderer (canvas, & background),
-		background (background)
+		background (background),
+		canvas (canvas)
 	{
-		this -> canvas = canvas;
+		depth_buffer = new scalar_t [canvas_height () * canvas_width ()];
 	}
 
 	virtual void draw (point p, color4 c)
 	{
-		this -> canvas -> at <cv::Vec3b> (cv::Point (p.x, p.y)) = {c.b, c.g, c.r};
+		scalar_t * _z = depth_buffer + p.y * canvas_width () + p.x;
+		if (p._z < * _z)
+		{
+			this -> canvas -> at <cv::Vec3b> (cv::Point (p.x, p.y)) = {c.b, c.g, c.r};
+			* _z = p._z;
+		}
 	};
 
 	virtual void clear ()
 	{
 		this -> canvas -> setTo (this -> background);
+
+		static const int dbs = canvas_width () * canvas_height ();
+		for (int i = 0; i < dbs; i++)
+			depth_buffer [i] = std::numeric_limits <scalar_t> :: infinity ();
 	}
 
 	virtual int canvas_width ()
@@ -37,6 +51,11 @@ public:
 	virtual int canvas_height ()
 	{
 		return canvas -> size ().height;
+	}
+
+	virtual ~CvRenderer ()
+	{
+		delete [] depth_buffer;
 	}
 };
 

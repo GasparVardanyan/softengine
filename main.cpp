@@ -16,8 +16,8 @@
 const int view_width = 640;
 const int view_height = 460;
 
-# define BOX
-// # define MONKEY
+// # define BOX
+# define MONKEY
 
 int main ()
 {
@@ -34,6 +34,8 @@ int main ()
 	// box -> rotation.z = 45 * PI / 180;
 
 	// box -> rotation.x = -15 * PI / 180;
+
+	box -> rotation.x = box -> rotation.y = .69;
 	rootContainer.addChild (box);
 # endif // BOX
 
@@ -51,7 +53,6 @@ int main ()
 	while (true)
 	{
 		camera.render (& rootContainer);
-
 		cv::imshow ("softengine", scene);
 
 		char key = cv::waitKey (1);
@@ -59,8 +60,9 @@ int main ()
 			break;
 
 # ifdef BOX
-		box -> rotation.x += .005;
-		box -> rotation.y += .005;
+		box -> rotation.x += .01;
+		box -> rotation.y += .01;
+		// std::cout << box -> rotation.x << " - " << box -> rotation.y << std::endl;
 # endif // BOX
 
 # ifdef MONKEY

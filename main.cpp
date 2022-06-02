@@ -16,8 +16,8 @@
 const int view_width = 640;
 const int view_height = 460;
 
-# define BOX
-// # define MONKEY
+// # define BOX
+# define MONKEY
 
 int main ()
 {

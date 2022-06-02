@@ -2,6 +2,7 @@
 # define __SOFTENGINE_CORE_OBJECT3D_H
 
 # include <memory>
+# include <string>
 # include <vector>
 
 # include "softengine/math.h"
@@ -9,7 +10,8 @@
 class Object3D
 {
 public:
-	// matrix4 transform;
+	std::string name;
+
 	vector3 position;
 	vector3 rotation;
 	vector3 scale;

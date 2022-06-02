@@ -15,7 +15,7 @@ struct face;
 typedef struct vector3 vector3;
 typedef struct matrix4 matrix4;
 typedef struct color4 color4;
-typedef struct vector3 vertex;
+typedef struct vertex vertex;
 typedef struct face face;
 typedef struct point point;
 
@@ -48,6 +48,12 @@ struct vector3
 	scalar_t x, y, z;
 };
 
+struct vertex
+{
+	struct vector3 position;
+	struct vector3 normal;
+};
+
 extern const struct vector3 VECTOR3_X;
 extern const struct vector3 VECTOR3_Y;
 extern const struct vector3 VECTOR3_Z;
@@ -63,10 +69,13 @@ struct vector3 vector3_transform (struct vector3 v, struct matrix4 m);
 struct vector3 vector3_scale (struct vector3 v, scalar_t s);
 struct vector3 vector3_negative (struct vector3 v);
 scalar_t vector3_length (struct vector3 v);
+scalar_t vector3_lengthsqr (struct vector3 v);
 struct vector3 vector3_normalized (struct vector3 v);
 scalar_t vector3_dot (struct vector3 v1, struct vector3 v2);
 struct vector3 vector3_cross (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_angle (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_anglecos (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_anglesin (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_dist (struct vector3 v1, struct vector3 v2);
 

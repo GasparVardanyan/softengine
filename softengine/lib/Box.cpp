@@ -8,19 +8,19 @@ Box::Box (scalar_t width, scalar_t height, scalar_t length, matrix4 transform)
 
 	this->geometry.create (8, 12);
 
-	this->geometry.vertices [0] = {-_w,  _l,  _h};
-	this->geometry.vertices [1] = { _w,  _l,  _h};
-	this->geometry.vertices [2] = {-_w, -_l,  _h};
-	this->geometry.vertices [3] = { _w, -_l,  _h};
-	this->geometry.vertices [4] = {-_w,  _l, -_h};
-	this->geometry.vertices [5] = { _w,  _l, -_h};
-	this->geometry.vertices [6] = { _w, -_l, -_h};
-	this->geometry.vertices [7] = {-_w, -_l, -_h};
+	this->geometry.vertices [0].position = {-_w,  _l,  _h};
+	this->geometry.vertices [1].position = { _w,  _l,  _h};
+	this->geometry.vertices [2].position = {-_w, -_l,  _h};
+	this->geometry.vertices [3].position = { _w, -_l,  _h};
+	this->geometry.vertices [4].position = {-_w,  _l, -_h};
+	this->geometry.vertices [5].position = { _w,  _l, -_h};
+	this->geometry.vertices [6].position = { _w, -_l, -_h};
+	this->geometry.vertices [7].position = {-_w, -_l, -_h};
 
 	if (!matrix4_equals (transform, {0}))
 		for (int i = 0; i < this->geometry.num_vertices; i++)
-			this->geometry.vertices [i] = vector3_transform (
-				this->geometry.vertices [i],
+			this->geometry.vertices [i].position = vector3_transform (
+				this->geometry.vertices [i].position,
 				transform
 			);
 

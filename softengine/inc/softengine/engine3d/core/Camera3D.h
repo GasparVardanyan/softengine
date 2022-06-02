@@ -19,7 +19,6 @@ protected:
 
 	void put_pixel (point p, color4 c);
 	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c);
-	void draw_scan_line (int y, const vector3 * va, const vector3 * vb, const vector3 * vc, const vector3 * vd, scalar_t yds, scalar_t yde, color4 color);
 	void draw_mesh (const Geometry & geometry, const matrix4 & transform);
 	vector3 project (vector3 v);
 

@@ -1,3 +1,4 @@
+# include <iostream>
 # include <utility>
 # include <vector>
 
@@ -10,7 +11,7 @@
 void Camera3D :: put_pixel (point p, color4 c)
 {
 	if (p.x > 0 && p.y > 0 && p.x < renderer_cw && p.y < renderer_ch)
-		renderer->draw ({p.x, p.y}, c);
+		renderer->put_pixel ({p.x, p.y}, c);
 }
 
 void Camera3D :: draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c)
@@ -41,53 +42,15 @@ vector3 Camera3D :: project (vector3 v)
 	return v;
 }
 
-void Camera3D :: draw_scan_line (int y, const vector3 * va, const vector3 * vb, const vector3 * vc, const vector3 * vd, scalar_t yds, scalar_t yde, color4 c)
-{
-	scalar_t sg = (y - va->y) / yds;
-	scalar_t eg = (y - vc->y) / yde;
-
-	int sx = interpolate (va->x, vb->x, sg);
-	int ex = interpolate (vc->x, vd->x, eg);
-	scalar_t sz = interpolate (va->z, vb->z, sg);
-	scalar_t ez = interpolate (vc->z, vd->z, eg);
-
-	if (sx > ex)
-	{
-		std::swap (sx, ex);
-		std::swap (sz, ez);
-	}
-
-	for (int x = sx; x <= ex; x++)
-		if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-		{
-			scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
-			renderer->draw ({x, y, z}, c);
-		}
-}
-
 void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform)
 {
 	vector3 * vertices_projected = new vector3 [geometry.num_vertices];
 
 	for (int i = 0; i < geometry.num_vertices; i++)
-		vertices_projected [i] = project (vector3_transform (geometry.vertices [i], transform));
-
-	unsigned long long colors [] = {
-		0x0000FF,
-		0x00FF00,
-		0xFF0000,
-		0xFFFF00,
-		0xFF00FF,
-		0x00FFFF
-	};
+		vertices_projected [i] = project (vector3_transform (geometry.vertices [i].position, transform));
 
 	for (int i = 0; i < geometry.num_faces; i++)
 	{
-		// unsigned long long color = colors [i / 2];
-		// unsigned char r = (color >> 16) & 0xFF;
-		// unsigned char g = (color >> 8) & 0xFF;
-		// unsigned char b = color & 0xFF;
-
 		unsigned char r, g, b;
 		r = g = b = (0.25f + (i % geometry.num_faces) * 0.75f / geometry.num_faces) * 0xFF;
 
@@ -108,34 +71,84 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 		scalar_t yd31 = v3->y - v1->y;
 		scalar_t yd21 = v2->y - v1->y;
 
-		if (yd31)
-		{
-			for (int y = v1->y; y < v2->y; y++)
-				draw_scan_line (y, v1, v3, v1, v2, yd31, yd21, {r, g, b});
+// DRAW_SCAN_LINE
 
-			for (int y = v2->y; y <= v3->y; y++)
-				draw_scan_line (y, v1, v3, v3, v2, yd31, yd23, {r, g, b});
+		int y;
+		const vector3 * va, * vb, * vc, * vd;
+		scalar_t yds, yde;
+
+		int y1 = v1->y;
+		int y2 = v2->y;
+		int y3 = v3->y;
+
+		if (y3 < 0 || y1 >= renderer_ch)
+			continue;
+
+		if (y1 < 0)
+		{
+			y1 = 0;
+			if (y2 < 0)
+				y2 = 0;
 		}
-		// else
-		// {
-		//     int sx = v1->x;
-		//     if (sx > v2->x)
-		//         sx = v2->x;
-		//     if (sx > v3->x)
-		//         sx = v3->x;
-		//
-		//     int ex = v1->x;
-		//     if (ex < v2->x)
-		//         ex = v2->x;
-		//     if (ex < v3->x)
-		//         ex = v3->x;
-		//
-		//     int y = v1->y;
-		//
-		//     for (int x = sx; x <= ex; x++)
-		//         if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-		//             renderer->draw ({x, y}, {0, 0, 0});
-		// }
+		if (y3 >= renderer_ch)
+		{
+			y3 = renderer_ch;
+			if (y2 >= renderer_ch)
+				y2 = renderer_ch;
+		}
+
+		va = v1, vb = v3, vc = v1, vd = v2, yds = yd31, yde = yd21;
+
+		int ys = y1, ye = y2;
+
+draw_scan_line:
+		for (y = ys; y <= ye; y++)
+		{
+			scalar_t sg = yds ? (y - va->y) / yds : 1;
+			scalar_t eg = yde ? (y - vc->y) / yde : 1;
+
+			int sx = interpolate (va->x, vb->x, sg);
+			int ex = interpolate (vc->x, vd->x, eg);
+			scalar_t sz = interpolate (va->z, vb->z, sg);
+			scalar_t ez = interpolate (vc->z, vd->z, eg);
+
+			if (sx > ex)
+			{
+				std::swap (sx, ex);
+				std::swap (sz, ez);
+			}
+
+			if (sx < 0) sx = 0;
+			if (ex > renderer_cw - 1) ex = renderer_cw - 1;
+
+			int x;
+			for (x = sx; x <= ex; x++)
+			{
+				scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
+				if (renderer->check_depth_buffer ({x, y, z}))
+				{
+					renderer->put_pixel ({x, y, z}, {r, g, b});
+					x++;
+					break;
+				}
+			}
+
+			for (; x <= ex; x++)
+			{
+				scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
+				if (renderer->check_depth_buffer ({x, y, z}))
+				{
+					renderer->put_pixel ({x, y, z}, {r, g, b});
+				}
+			}
+		}
+
+		if (y < y3)
+		{
+			vc = v3, yde = yd23;
+			ys = y2; ye = y3;
+			goto draw_scan_line;
+		}
 	}
 
 	for (int i = 0; i < geometry.num_faces; i++)
@@ -155,7 +168,7 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 		break;
 		const vector3 & v = vertices_projected [i];
 		if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
-			renderer->draw ({(int) v.x, (int) v.y}, {0xff, 0xff, 0xff});
+			renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0xff, 0xff});
 	}
 
 	delete [] vertices_projected;
@@ -165,7 +178,7 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 {
 	if (matrix4_equals (transform, {0}))
 	{
-		renderer->clear ();
+		renderer->clear_canvas ();
 
 		transform = MATRIX4_TRANSFORM (
 			vector3_negative (position),

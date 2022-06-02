@@ -13,6 +13,7 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 	{
 		auto m = new Mesh;
 		int verticesStep = 1;
+		m->name = mesh ["name"].asString ();
 
 		switch (mesh ["uvCount"].asInt ())
 		{
@@ -34,15 +35,18 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 
 		for (int i = 0, j = 0; i < vc; i += verticesStep, j++)
 		{
-			m->geometry.vertices [j].x = mesh ["vertices"] [i].asDouble ();
-			m->geometry.vertices [j].y = mesh ["vertices"] [i + 1].asDouble ();
-			m->geometry.vertices [j].z = mesh ["vertices"] [i + 2].asDouble ();
+			m->geometry.vertices [j].position.x = mesh ["vertices"] [i].asDouble ();
+			m->geometry.vertices [j].position.y = mesh ["vertices"] [i + 1].asDouble ();
+			m->geometry.vertices [j].position.z = mesh ["vertices"] [i + 2].asDouble ();
+			m->geometry.vertices [j].normal.x = mesh ["vertices"] [i + 3].asDouble ();
+			m->geometry.vertices [j].normal.y = mesh ["vertices"] [i + 4].asDouble ();
+			m->geometry.vertices [j].normal.z = mesh ["vertices"] [i + 5].asDouble ();
 		}
 
 		if (!matrix4_equals (transform, {0}))
 			for (int i = 0; i < m->geometry.num_vertices; i++)
-				m->geometry.vertices [i] = vector3_transform (
-					m->geometry.vertices [i],
+				m->geometry.vertices [i].position = vector3_transform (
+					m->geometry.vertices [i].position,
 					transform
 				);
 

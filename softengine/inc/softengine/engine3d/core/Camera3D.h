@@ -28,8 +28,8 @@ public:
 		: projector (projector)
 		, renderer (renderer)
 	{
-		renderer_cw = renderer -> canvas_width ();
-		renderer_ch = renderer -> canvas_height ();
+		renderer_cw = renderer -> canvas_width;
+		renderer_ch = renderer -> canvas_height;
 	}
 
 	void render (Object3D * container, matrix4 transform = MATRIX4_ZERO);

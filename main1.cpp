@@ -60,16 +60,16 @@ int main ()
 
 		monkey -> rotation.y += .01;
 
+		fps++;
+
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now ();
 
 		if (std::chrono::duration_cast <std::chrono::nanoseconds> (end - beg).count () >= 1e9l)
 		{
-			beg = std::chrono::steady_clock::now ();
+			beg = end;
 			std::cout << fps << std::endl;
 			fps = 0;
 		}
-		else
-			fps++;
 	}
 
 	cv::destroyAllWindows ();

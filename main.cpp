@@ -23,6 +23,7 @@ int main ()
 {
 	cv::Scalar background (0x66, 0x44, 0x22);
 	cv::Mat scene (cv::Size (view_width, view_height), CV_8UC3, background);
+	cv::Mat blank (cv::Size (view_width, view_height), CV_8UC3, background);
 
 	Object3D rootContainer;
 	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));

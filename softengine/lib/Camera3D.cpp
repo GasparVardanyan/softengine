@@ -41,8 +41,28 @@ vector3 Camera3D :: project (vector3 v)
 	return v;
 }
 
-void Camera3D :: draw_scan_line (int y, const vector3 * va, const vector3 * vb, const vector3 * vc, const vector3 * vd, color4 color)
+void Camera3D :: draw_scan_line (int y, const vector3 * va, const vector3 * vb, const vector3 * vc, const vector3 * vd, scalar_t yds, scalar_t yde, color4 c)
 {
+	scalar_t sg = (y - va->y) / yds;
+	scalar_t eg = (y - vc->y) / yde;
+
+	int sx = interpolate (va->x, vb->x, sg);
+	int ex = interpolate (vc->x, vd->x, eg);
+	scalar_t sz = interpolate (va->z, vb->z, sg);
+	scalar_t ez = interpolate (vc->z, vd->z, eg);
+
+	if (sx > ex)
+	{
+		std::swap (sx, ex);
+		std::swap (sz, ez);
+	}
+
+	for (int x = sx; x <= ex; x++)
+		if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
+		{
+			scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
+			renderer->draw ({x, y, z}, c);
+		}
 }
 
 void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform)
@@ -84,60 +104,17 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 
 		// v1 - top, v2 - mid, v3 - bot
 
-		scalar_t yd32 = v3->y - v2->y;
+		scalar_t yd23 = v2->y - v3->y;
 		scalar_t yd31 = v3->y - v1->y;
 		scalar_t yd21 = v2->y - v1->y;
 
 		if (yd31)
 		{
-			if (yd21)
-				for (int y = v1->y; y < v2->y; y++)
-				{
-					scalar_t sg = (y - v1->y) / yd31;
-					scalar_t eg = (y - v1->y) / yd21;
+			for (int y = v1->y; y < v2->y; y++)
+				draw_scan_line (y, v1, v3, v1, v2, yd31, yd21, {r, g, b});
 
-					int sx = interpolate (v1->x, v3->x, sg);
-					int ex = interpolate (v1->x, v2->x, eg);
-					scalar_t sz = interpolate (v1->z, v3->z, sg);
-					scalar_t ez = interpolate (v1->z, v2->z, eg);
-
-					if (sx > ex)
-					{
-						std::swap (sx, ex);
-						std::swap (sz, ez);
-					}
-
-					for (int x = sx; x <= ex; x++)
-						if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-						{
-							scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
-							renderer->draw ({x, y, z}, {r, g, b});
-						}
-				}
-
-			if (yd32)
-				for (int y = v2->y; y <= v3->y; y++)
-				{
-					scalar_t sg = (y - v1->y) / yd31;
-					scalar_t eg = (v3->y - y) / yd32;
-					int sx = interpolate (v1->x, v3->x, sg);
-					int ex = interpolate (v3->x, v2->x, eg);
-					scalar_t sz = interpolate (v1->z, v3->z, sg);
-					scalar_t ez = interpolate (v3->z, v2->z, eg);
-
-					if (sx > ex)
-					{
-						std::swap (sx, ex);
-						std::swap (sz, ez);
-					}
-
-					for (int x = sx; x <= ex; x++)
-						if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-						{
-							scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
-							renderer->draw ({x, y, z}, {r, g, b});
-						}
-				}
+			for (int y = v2->y; y <= v3->y; y++)
+				draw_scan_line (y, v1, v3, v3, v2, yd31, yd23, {r, g, b});
 		}
 		// else
 		// {
@@ -164,9 +141,9 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 	for (int i = 0; i < geometry.num_faces; i++)
 	{
 		break;
-		const auto & v1 = vertices_projected [geometry.faces [i].v1];
-		const auto & v2 = vertices_projected [geometry.faces [i].v2];
-		const auto & v3 = vertices_projected [geometry.faces [i].v3];
+		const vector3 & v1 = vertices_projected [geometry.faces [i].v1];
+		const vector3 & v2 = vertices_projected [geometry.faces [i].v2];
+		const vector3 & v3 = vertices_projected [geometry.faces [i].v3];
 
 		draw_line (v1.x, v1.y, v2.x, v2.y, {0, 0, 0});
 		draw_line (v2.x, v2.y, v3.x, v3.y, {0, 0, 0});

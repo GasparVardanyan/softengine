@@ -52,10 +52,23 @@ extern const struct vector3 VECTOR3_X;
 extern const struct vector3 VECTOR3_Y;
 extern const struct vector3 VECTOR3_Z;
 extern const struct vector3 VECTOR3_ZERO;
+extern const struct vector3 VECTOR3_UP;
+extern const struct vector3 VECTOR3_DOWN;
+extern const struct vector3 VECTOR3_LEFT;
+extern const struct vector3 VECTOR3_RIGHT;
+extern const struct vector3 VECTOR3_FORWARD;
+extern const struct vector3 VECTOR3_BACK;
 
 struct vector3 vector3_transform (struct vector3 v, struct matrix4 m);
 struct vector3 vector3_scale (struct vector3 v, scalar_t s);
 struct vector3 vector3_negative (struct vector3 v);
+scalar_t vector3_length (struct vector3 v);
+struct vector3 vector3_normalized (struct vector3 v);
+scalar_t vector3_dot (struct vector3 v1, struct vector3 v2);
+struct vector3 vector3_cross (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_angle (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_dist (struct vector3 v1, struct vector3 v2);
 
 
 

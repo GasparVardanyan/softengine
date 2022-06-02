@@ -31,12 +31,12 @@ int main ()
 # ifdef BOX
 	// Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
 	Box * box = new Box (2, 2, 2);
-	box -> position.z = 15;
-	// box -> rotation.z = 45 * PI / 180;
+	box->position.z = 15;
+	// box->rotation.z = 45 * PI / 180;
 
-	// box -> rotation.x = -15 * PI / 180;
+	// box->rotation.x = -15 * PI / 180;
 
-	box -> rotation.x = box -> rotation.y = .69;
+	box->rotation.x = box->rotation.y = .69;
 	rootContainer.addChild (box);
 # endif // BOX
 
@@ -46,8 +46,8 @@ int main ()
 	monbab >> monbin;
 
 	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1, 1, 1));
-	monkey -> position.z = 7;
-	// monkey -> addChild (box);
+	monkey->position.z = 7;
+	// monkey->addChild (box);
 	rootContainer.addChild (monkey);
 # endif // MONKEY
 
@@ -61,13 +61,13 @@ int main ()
 			break;
 
 # ifdef BOX
-		box -> rotation.x += .01;
-		box -> rotation.y += .01;
-		// std::cout << box -> rotation.x << " - " << box -> rotation.y << std::endl;
+		box->rotation.x += .01;
+		box->rotation.y += .01;
+		// std::cout << box->rotation.x << " - " << box->rotation.y << std::endl;
 # endif // BOX
 
 # ifdef MONKEY
-		monkey -> rotation.y += .01;
+		monkey->rotation.y += .01;
 # endif // MONKEY
 	}
 

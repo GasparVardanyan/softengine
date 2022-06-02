@@ -26,10 +26,10 @@ int main ()
 	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
 
 	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
-	box -> position.z = 6;
-	// box -> rotation.z = 45 * PI / 180;
+	box->position.z = 6;
+	// box->rotation.z = 45 * PI / 180;
 
-	// box -> rotation.x = -15 * PI / 180;
+	// box->rotation.x = -15 * PI / 180;
 	// rootContainer.addChild (box);
 
 	std::ifstream monbab ("monkey.babylon", std::ifstream::binary);
@@ -37,8 +37,8 @@ int main ()
 	monbab >> monbin;
 
 	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1, 1, 1));
-	monkey -> position.z = 15;
-	monkey -> addChild (box);
+	monkey->position.z = 15;
+	monkey->addChild (box);
 	rootContainer.addChild (monkey);
 
 	int fps = 0; // loop's fps, not the camera's :d
@@ -55,10 +55,10 @@ int main ()
 		if (key == 'q')
 			break;
 
-		box -> rotation.x += .01;
-		box -> rotation.y += .01;
+		box->rotation.x += .01;
+		box->rotation.y += .01;
 
-		monkey -> rotation.y += .01;
+		monkey->rotation.y += .01;
 
 		fps++;
 

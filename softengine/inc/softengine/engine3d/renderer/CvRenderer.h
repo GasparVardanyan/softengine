@@ -18,7 +18,7 @@ protected:
 public:
 
 	CvRenderer (cv::Mat * canvas, cv::Scalar background)
-		: IRenderer (canvas, & background, canvas -> size ().width, canvas -> size ().height),
+		: IRenderer (canvas, & background, canvas->size ().width, canvas->size ().height),
 		background (background),
 		canvas (canvas)
 	{
@@ -30,14 +30,14 @@ public:
 		scalar_t * _z = depth_buffer + p.y * canvas_width + p.x;
 		if (p._z < * _z)
 		{
-			this -> canvas -> at <cv::Vec3b> (cv::Point (p.x, p.y)) = {c.b, c.g, c.r};
+			this->canvas->at <cv::Vec3b> (cv::Point (p.x, p.y)) = {c.b, c.g, c.r};
 			* _z = p._z;
 		}
 	};
 
 	virtual void clear ()
 	{
-		this -> canvas -> setTo (this -> background);
+		this->canvas->setTo (this->background);
 
 		static const int dbs = canvas_width * canvas_height;
 		for (int i = 0; i < dbs; i++)

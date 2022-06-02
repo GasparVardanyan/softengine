@@ -26,18 +26,18 @@ public:
 	{
 		destroy ();
 
-		this -> num_vertices = num_vertices;
-		this -> num_faces = num_faces;
+		this->num_vertices = num_vertices;
+		this->num_faces = num_faces;
 
-		this -> vertices = new vertex [num_vertices];
-		this -> faces = new face [num_faces];
+		this->vertices = new vertex [num_vertices];
+		this->faces = new face [num_faces];
 
-		this -> created = true;
+		this->created = true;
 	}
 
 	void destroy ()
 	{
-		if (this -> created)
+		if (this->created)
 		{
 			delete [] vertices;
 			delete [] faces;

@@ -10,7 +10,7 @@
 void Camera3D :: put_pixel (point p, color4 c)
 {
 	if (p.x > 0 && p.y > 0 && p.x < renderer_cw && p.y < renderer_ch)
-		renderer -> draw ({p.x, p.y}, c);
+		renderer->draw ({p.x, p.y}, c);
 }
 
 void Camera3D :: draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c)
@@ -75,31 +75,31 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 		const vector3 * v2 = vertices_projected + geometry.faces [i].v2;
 		const vector3 * v3 = vertices_projected + geometry.faces [i].v3;
 
-		if (v2 -> y < v1 -> y)
+		if (v2->y < v1->y)
 			std::swap (v1, v2);
-		if (v3 -> y < v1 -> y)
+		if (v3->y < v1->y)
 			std::swap (v1, v3);
-		if (v3 -> y < v2 -> y)
+		if (v3->y < v2->y)
 			std::swap (v2, v3);
 
 		// v1 - top, v2 - mid, v3 - bot
 
-		scalar_t yd32 = v3 -> y - v2 -> y;
-		scalar_t yd31 = v3 -> y - v1 -> y;
-		scalar_t yd21 = v2 -> y - v1 -> y;
+		scalar_t yd32 = v3->y - v2->y;
+		scalar_t yd31 = v3->y - v1->y;
+		scalar_t yd21 = v2->y - v1->y;
 
 		if (yd31)
 		{
 			if (yd21)
-				for (int y = v1 -> y; y < v2 -> y; y++)
+				for (int y = v1->y; y < v2->y; y++)
 				{
-					scalar_t sg = (y - v1 -> y) / yd31;
-					scalar_t eg = (y - v1 -> y) / yd21;
+					scalar_t sg = (y - v1->y) / yd31;
+					scalar_t eg = (y - v1->y) / yd21;
 
-					int sx = interpolate (v1 -> x, v3 -> x, sg);
-					int ex = interpolate (v1 -> x, v2 -> x, eg);
-					scalar_t sz = interpolate (v1 -> z, v3 -> z, sg);
-					scalar_t ez = interpolate (v1 -> z, v2 -> z, eg);
+					int sx = interpolate (v1->x, v3->x, sg);
+					int ex = interpolate (v1->x, v2->x, eg);
+					scalar_t sz = interpolate (v1->z, v3->z, sg);
+					scalar_t ez = interpolate (v1->z, v2->z, eg);
 
 					if (sx > ex)
 					{
@@ -111,19 +111,19 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 						if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
 						{
 							scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
-							renderer -> draw ({x, y, z}, {r, g, b});
+							renderer->draw ({x, y, z}, {r, g, b});
 						}
 				}
 
 			if (yd32)
-				for (int y = v2 -> y; y <= v3 -> y; y++)
+				for (int y = v2->y; y <= v3->y; y++)
 				{
-					scalar_t sg = (y - v1 -> y) / yd31;
-					scalar_t eg = (v3 -> y - y) / yd32;
-					int sx = interpolate (v1 -> x, v3 -> x, sg);
-					int ex = interpolate (v3 -> x, v2 -> x, eg);
-					scalar_t sz = interpolate (v1 -> z, v3 -> z, sg);
-					scalar_t ez = interpolate (v3 -> z, v2 -> z, eg);
+					scalar_t sg = (y - v1->y) / yd31;
+					scalar_t eg = (v3->y - y) / yd32;
+					int sx = interpolate (v1->x, v3->x, sg);
+					int ex = interpolate (v3->x, v2->x, eg);
+					scalar_t sz = interpolate (v1->z, v3->z, sg);
+					scalar_t ez = interpolate (v3->z, v2->z, eg);
 
 					if (sx > ex)
 					{
@@ -135,29 +135,29 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 						if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
 						{
 							scalar_t z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
-							renderer -> draw ({x, y, z}, {r, g, b});
+							renderer->draw ({x, y, z}, {r, g, b});
 						}
 				}
 		}
 		// else
 		// {
-		//     int sx = v1 -> x;
-		//     if (sx > v2 -> x)
-		//         sx = v2 -> x;
-		//     if (sx > v3 -> x)
-		//         sx = v3 -> x;
+		//     int sx = v1->x;
+		//     if (sx > v2->x)
+		//         sx = v2->x;
+		//     if (sx > v3->x)
+		//         sx = v3->x;
 		//
-		//     int ex = v1 -> x;
-		//     if (ex < v2 -> x)
-		//         ex = v2 -> x;
-		//     if (ex < v3 -> x)
-		//         ex = v3 -> x;
+		//     int ex = v1->x;
+		//     if (ex < v2->x)
+		//         ex = v2->x;
+		//     if (ex < v3->x)
+		//         ex = v3->x;
 		//
-		//     int y = v1 -> y;
+		//     int y = v1->y;
 		//
 		//     for (int x = sx; x <= ex; x++)
 		//         if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-		//             renderer -> draw ({x, y}, {0, 0, 0});
+		//             renderer->draw ({x, y}, {0, 0, 0});
 		// }
 	}
 
@@ -178,7 +178,7 @@ void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform
 		break;
 		const vector3 & v = vertices_projected [i];
 		if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
-			renderer -> draw ({(int) v.x, (int) v.y}, {0xff, 0xff, 0xff});
+			renderer->draw ({(int) v.x, (int) v.y}, {0xff, 0xff, 0xff});
 	}
 
 	delete [] vertices_projected;
@@ -188,7 +188,7 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 {
 	if (matrix4_equals (transform, {0}))
 	{
-		renderer -> clear ();
+		renderer->clear ();
 
 		transform = MATRIX4_TRANSFORM (
 			vector3_negative (position),
@@ -199,9 +199,9 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 
 	transform = matrix4_mul (
 		MATRIX4_TRANSFORM (
-			container -> position,
-			container -> rotation,
-			container -> scale
+			container->position,
+			container->rotation,
+			container->scale
 		),
 		transform
 	);
@@ -209,8 +209,8 @@ void Camera3D :: render (Object3D * container, matrix4 transform)
 
 
 	if (dynamic_cast <Mesh *> (container) != nullptr)
-		draw_mesh (((Mesh *) container) -> geometry, transform);
+		draw_mesh (((Mesh *) container)->geometry, transform);
 
-	for (auto obj : container -> children)
+	for (auto obj : container->children)
 		render (obj.get (), transform);
 }

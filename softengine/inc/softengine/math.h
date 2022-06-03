@@ -78,6 +78,8 @@ scalar_t vector3_anglecos (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_anglesin (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_dist (struct vector3 v1, struct vector3 v2);
+struct vector3 vector3_add (struct vector3 v1, struct vector3 v2);
+struct vector3 vector3_sub (struct vector3 v1, struct vector3 v2);
 
 
 

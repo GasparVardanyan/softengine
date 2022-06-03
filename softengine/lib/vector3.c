@@ -95,7 +95,26 @@ scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2)
 
 	return xdist * xdist + ydist * ydist + zdist * zdist;
 }
+
 scalar_t vector3_dist (struct vector3 v1, struct vector3 v2)
 {
 	return sqrtl (vector3_distsqr (v1, v2));
+}
+
+struct vector3 vector3_add (struct vector3 v1, struct vector3 v2)
+{
+	return (struct vector3) {
+		v1.x + v2.x,
+		v1.y + v2.y,
+		v1.z + v2.z
+	};
+}
+
+struct vector3 vector3_sub (struct vector3 v1, struct vector3 v2)
+{
+	return (struct vector3) {
+		v1.x - v2.x,
+		v1.y - v2.y,
+		v1.z - v2.z
+	};
 }

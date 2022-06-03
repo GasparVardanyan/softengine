@@ -31,12 +31,12 @@ int main ()
 # ifdef BOX
 	// Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
 	Box * box = new Box (2, 2, 2);
-	box->position.z = 15;
+	box->position.z = 10;
 	// box->rotation.z = 45 * PI / 180;
 
 	// box->rotation.x = -15 * PI / 180;
 
-	box->rotation.x = box->rotation.y = .69;
+	// box->rotation.x = box->rotation.y = .69;
 	rootContainer.addChild (box);
 # endif // BOX
 
@@ -61,8 +61,8 @@ int main ()
 			break;
 
 # ifdef BOX
-		box->rotation.x += .01;
-		box->rotation.y += .01;
+		// box->rotation.x += .01;
+		// box->rotation.y += .01;
 		// std::cout << box->rotation.x << " - " << box->rotation.y << std::endl;
 # endif // BOX
 

@@ -5,6 +5,7 @@
 
 # include "softengine/engine3d/core/Geometry.h"
 # include "softengine/engine3d/core/Object3D.h"
+# include "softengine/engine3d/core/Scene.h"
 # include "softengine/engine3d/renderer/IRenderer.h"
 # include "softengine/math.h"
 
@@ -19,7 +20,6 @@ protected:
 
 	void put_pixel (point p, color4 c);
 	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c);
-	void draw_mesh (const Geometry & geometry, const matrix4 & transform);
 	vector3 project (vector3 v);
 
 public:
@@ -31,7 +31,7 @@ public:
 		renderer_ch = renderer->canvas_height;
 	}
 
-	void render (Object3D * container, matrix4 transform = MATRIX4_ZERO);
+	void render (const Scene & scene);
 };
 
 # endif // __SOFTENGINE_CORE_CAMERA3D_H

@@ -1,56 +1,59 @@
 # ifndef __SOFTENGINE_CORE_GEOMETRY_H
 # define __SOFTENGINE_CORE_GEOMETRY_H
 
+# include <vector>
+
 # include "softengine/math.h"
+
+struct face
+{
+	std::size_t v1, v2, v3;
+};
+
+struct vertex
+{
+	vector3 position;
+	vector3 normal;
+};
 
 class Geometry
 {
-protected:
-		bool created;
 public:
-	vertex * vertices;
-	face * faces;
+	std::vector <vertex> vertices;
+	std::vector <face> faces;
 
-	int num_vertices;
-	int num_faces;
+	std::size_t num_vertices;
+	std::size_t num_faces;
 
 	Geometry ()
-		: vertices (nullptr)
-		, faces (nullptr)
+		: vertices (0)
+		, faces (0)
 		, num_vertices (0)
 		, num_faces (0)
-		, created (false)
 	{}
 
-	void create (int num_vertices, int num_faces)
+	void create (std::size_t num_vertices = 0, std::size_t num_faces = 0)
 	{
-		destroy ();
-
 		this->num_vertices = num_vertices;
 		this->num_faces = num_faces;
 
-		this->vertices = new vertex [num_vertices];
-		this->faces = new face [num_faces];
+		this->vertices.resize (num_vertices);
+		this->faces.resize (num_faces);
+	}
 
-		this->created = true;
+	void update_sizes ()
+	{
+		this->num_vertices = this->vertices.size ();
+		this->num_faces = this->faces.size ();
 	}
 
 	void destroy ()
 	{
-		if (this->created)
-		{
-			delete [] vertices;
-			delete [] faces;
+		this->num_vertices = 0;
+		this->num_faces = 0;
 
-			num_vertices = 0;
-			num_faces = 0;
-			created = false;
-		}
-	}
-
-	virtual ~Geometry ()
-	{
-		destroy ();
+		this->vertices.clear ();
+		this->faces.clear ();
 	}
 };
 

@@ -6,6 +6,7 @@
 
 class Mesh : public Object3D
 {
+	friend class Scene;
 	friend class Camera3D;
 	friend class ParserBABYLON;
 

@@ -7,6 +7,7 @@
 
 # include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/core/Object3D.h"
+# include "softengine/engine3d/core/Scene.h"
 # include "softengine/engine3d/parser/ParserBABYLON.h"
 # include "softengine/engine3d/primitives/Box.h"
 # include "softengine/engine3d/renderer/CvRenderer.h"
@@ -23,6 +24,8 @@ int main ()
 	cv::Mat scene (cv::Size (view_width, view_height), CV_8UC3, background);
 
 	Object3D rootContainer;
+	Scene scene3d (& rootContainer);
+
 	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
 
 	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
@@ -47,7 +50,8 @@ int main ()
 
 	while (true)
 	{
-		camera.render (& rootContainer);
+		scene3d.update ();
+		camera.render (scene3d);
 
 		cv::imshow ("softengine", scene);
 

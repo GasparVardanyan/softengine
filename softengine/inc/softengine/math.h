@@ -30,11 +30,6 @@ struct color4
 	scalar_t a;
 };
 
-struct face
-{
-	int v1, v2, v3;
-};
-
 struct point
 {
 	int x, y;
@@ -46,12 +41,6 @@ struct point
 struct vector3
 {
 	scalar_t x, y, z;
-};
-
-struct vertex
-{
-	struct vector3 position;
-	struct vector3 normal;
 };
 
 extern const struct vector3 VECTOR3_X;

@@ -1,4 +1,3 @@
-# include <iostream>
 # include <utility>
 # include <vector>
 
@@ -42,8 +41,18 @@ vector3 Camera3D :: project (vector3 v)
 	return v;
 }
 
-void Camera3D :: draw_mesh (const Geometry & geometry, const matrix4 & transform)
+void Camera3D :: render (const Scene & scene)
 {
+	renderer->clear_canvas ();
+
+	matrix4 transform = MATRIX4_TRANSFORM (
+		vector3_negative (position),
+		vector3_negative (rotation),
+		(vector3) {1, 1, 1}
+	);
+
+	const Geometry & geometry = scene.geometry;
+
 	vector3 * vertices_transformed = new vector3 [geometry.num_vertices];
 	vector3 * normals_transformed = new vector3 [geometry.num_vertices];
 	vector3 * vertices_projected = new vector3 [geometry.num_vertices];
@@ -218,35 +227,5 @@ __handle_pixel:
 	delete [] vertices_transformed;
 	delete [] normals_transformed;
 	delete [] vertices_projected;
-}
 
-void Camera3D :: render (Object3D * container, matrix4 transform)
-{
-	if (matrix4_equals (transform, {0}))
-	{
-		renderer->clear_canvas ();
-
-		transform = MATRIX4_TRANSFORM (
-			vector3_negative (position),
-			vector3_negative (rotation),
-			(vector3) {1, 1, 1}
-		);
-	}
-
-	transform = matrix4_mul (
-		MATRIX4_TRANSFORM (
-			container->position,
-			container->rotation,
-			container->scale
-		),
-		transform
-	);
-
-
-
-	if (dynamic_cast <Mesh *> (container) != nullptr)
-		draw_mesh (((Mesh *) container)->geometry, transform);
-
-	for (auto obj : container->children)
-		render (obj.get (), transform);
 }

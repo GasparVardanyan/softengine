@@ -37,14 +37,24 @@ public:
 		this->num_vertices = num_vertices;
 		this->num_faces = num_faces;
 
-		this->vertices.resize (num_vertices);
-		this->faces.resize (num_faces);
+		this->vertices.reserve (num_vertices);
+		this->faces.reserve (num_faces);
 	}
 
 	void update_sizes ()
 	{
 		this->num_vertices = this->vertices.size ();
 		this->num_faces = this->faces.size ();
+	}
+
+	void transform (const matrix4 & transform)
+	{
+		// TODO: transform normals
+		for (int i = 0; i < this->num_vertices; i++)
+			this->vertices [i].position = vector3_transform (
+				this->vertices [i].position,
+				transform
+			);
 	}
 
 	void destroy ()

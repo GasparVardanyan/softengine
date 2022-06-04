@@ -20,6 +20,11 @@ const int view_height = 460;
 // # define BOX
 # define MONKEY
 
+/*
+ * TODO: camera transformation works wrong... implement mat4 lookAt
+ * TODO: avoid processing objects (or parts of them) out of FOV
+ */
+
 int main ()
 {
 	cv::Scalar background (0x66, 0x44, 0x22);

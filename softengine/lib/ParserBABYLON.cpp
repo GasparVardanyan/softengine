@@ -15,7 +15,7 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 		int verticesStep = 1;
 		m->name = mesh ["name"].asString ();
 
-		switch (mesh ["uvCount"].asInt ())
+		switch (mesh ["uvCount"].asUInt64 ())
 		{
 		case 0:
 			verticesStep = 6;
@@ -35,27 +35,31 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 
 		for (int i = 0, j = 0; i < vc; i += verticesStep, j++)
 		{
-			m->geometry.vertices [j].position.x = mesh ["vertices"] [i].asDouble ();
-			m->geometry.vertices [j].position.y = mesh ["vertices"] [i + 1].asDouble ();
-			m->geometry.vertices [j].position.z = mesh ["vertices"] [i + 2].asDouble ();
-			m->geometry.vertices [j].normal.x = mesh ["vertices"] [i + 3].asDouble ();
-			m->geometry.vertices [j].normal.y = mesh ["vertices"] [i + 4].asDouble ();
-			m->geometry.vertices [j].normal.z = mesh ["vertices"] [i + 5].asDouble ();
+			m->geometry.vertices.push_back ({
+				.position = {
+					mesh ["vertices"] [i].asDouble (),
+					mesh ["vertices"] [i + 1].asDouble (),
+					mesh ["vertices"] [i + 2].asDouble ()
+				},
+				.normal = {
+					mesh ["vertices"] [i + 3].asDouble (),
+					mesh ["vertices"] [i + 4].asDouble (),
+					mesh ["vertices"] [i + 5].asDouble ()
+				}
+			});
 		}
-
-		if (!matrix4_equals (transform, {0}))
-			for (int i = 0; i < m->geometry.num_vertices; i++)
-				m->geometry.vertices [i].position = vector3_transform (
-					m->geometry.vertices [i].position,
-					transform
-				);
 
 		for (int i = 0, j = 0; i < ic; i += 3, j++)
 		{
-			m->geometry.faces [j].v1 = mesh ["indices"] [i].asInt ();
-			m->geometry.faces [j].v2 = mesh ["indices"] [i + 1].asInt ();
-			m->geometry.faces [j].v3 = mesh ["indices"] [i + 2].asInt ();
+			m->geometry.faces.push_back ({
+				mesh ["indices"] [i].asUInt64 (),
+				mesh ["indices"] [i + 1].asUInt64 (),
+				mesh ["indices"] [i + 2].asUInt64 ()
+			});
 		}
+
+		if (!matrix4_equals (transform, {0}))
+			m->geometry.transform (transform);
 
 		m->position = {
 			mesh ["position"] [0].asDouble (),

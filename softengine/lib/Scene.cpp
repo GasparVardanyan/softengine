@@ -2,8 +2,6 @@
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/math.h"
 
-static std::size_t num_vertices = 0;
-
 void Scene :: update (const Object3D * container, matrix4 transform)
 {
 	transform = matrix4_mul (
@@ -30,13 +28,14 @@ void Scene :: update (const Object3D * container, matrix4 transform)
 		for (auto f : g.faces)
 		{
 			this->geometry.faces.push_back ({
-				f.v1 + num_vertices,
-				f.v2 + num_vertices,
-				f.v3 + num_vertices
+				f.v1 + _num_vertices,
+				f.v2 + _num_vertices,
+				f.v3 + _num_vertices
 			});
 		}
 
-		num_vertices += g.num_vertices;
+		_num_vertices += g.num_vertices;
+		_num_faces += g.num_faces;
 	}
 
 	for (const auto obj : container->children)
@@ -45,9 +44,10 @@ void Scene :: update (const Object3D * container, matrix4 transform)
 
 void Scene :: update ()
 {
-	num_vertices = 0;
 	this->geometry.destroy ();
-	this->geometry.create ();
+	this->geometry.create (_num_vertices, _num_faces);
+	_num_vertices = 0;
+	_num_faces = 0;
 	update (root_container);
 	this->geometry.update_sizes ();
 }

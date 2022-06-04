@@ -12,13 +12,17 @@ class Scene : public Mesh
 
 protected:
 	// Geometry geometry;
+	std::size_t _num_vertices;
+	std::size_t _num_faces;
 	void update (const Object3D * container, matrix4 transform = MATRIX4_IDENTITY);
 
 public:
 	const Object3D * root_container;
 
 	Scene (const Object3D * root_container) :
-		root_container (root_container)
+		root_container (root_container),
+		_num_vertices (0),
+		_num_faces (0)
 	{
 	}
 

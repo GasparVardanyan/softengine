@@ -1,0 +1,196 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/gaspar/softengine/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20210905.0/
+Box	softengine/inc/softengine/engine3d/primitives/Box.h	/^class Box : public Mesh$/;"	c
+Box	softengine/lib/Box.cpp	/^Box::Box (scalar_t width, scalar_t height, scalar_t length, matrix4 transform)$/;"	f	class:Box
+Camera3D	softengine/inc/softengine/engine3d/core/Camera3D.h	/^	Camera3D (matrix4 projector, std::shared_ptr <IRenderer> renderer)$/;"	f	class:Camera3D
+Camera3D	softengine/inc/softengine/engine3d/core/Camera3D.h	/^class Camera3D : public Object3D$/;"	c
+CvRenderer	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^	CvRenderer (cv::Mat * canvas, cv::Scalar background)$/;"	f	class:CvRenderer
+CvRenderer	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^class CvRenderer : public IRenderer$/;"	c
+Geometry	softengine/inc/softengine/engine3d/core/Geometry.h	/^	Geometry ()$/;"	f	class:Geometry
+Geometry	softengine/inc/softengine/engine3d/core/Geometry.h	/^class Geometry$/;"	c
+IRenderer	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	IRenderer (void * scene, void * background, int canvas_width, int canvas_height)$/;"	f	class:IRenderer
+IRenderer	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^class IRenderer$/;"	c
+MATRIX4_IDENTITY	softengine/lib/matrix4.c	/^const struct matrix4 MATRIX4_IDENTITY = {$/;"	v	typeref:typename:const struct matrix4
+MATRIX4_ROTATIONX	softengine/lib/matrix4.c	/^struct matrix4 MATRIX4_ROTATIONX (scalar_t a)$/;"	f	typeref:struct:matrix4
+MATRIX4_ROTATIONY	softengine/lib/matrix4.c	/^struct matrix4 MATRIX4_ROTATIONY (scalar_t a)$/;"	f	typeref:struct:matrix4
+MATRIX4_ROTATIONZ	softengine/lib/matrix4.c	/^struct matrix4 MATRIX4_ROTATIONZ (scalar_t a)$/;"	f	typeref:struct:matrix4
+MATRIX4_SCALE	softengine/lib/matrix4.c	/^struct matrix4 MATRIX4_SCALE (scalar_t x, scalar_t y, scalar_t z)$/;"	f	typeref:struct:matrix4
+MATRIX4_TRANSFORM	softengine/lib/matrix4.c	/^struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl)$/;"	f	typeref:struct:matrix4
+MATRIX4_TRANSLATION	softengine/lib/matrix4.c	/^struct matrix4 MATRIX4_TRANSLATION (scalar_t x, scalar_t y, scalar_t z)$/;"	f	typeref:struct:matrix4
+MATRIX4_ZERO	softengine/lib/matrix4.c	/^const struct matrix4 MATRIX4_ZERO = { 0 };$/;"	v	typeref:typename:const struct matrix4
+MONKEY	main.cpp	/^# define MONKEY$/;"	d	file:
+Mesh	softengine/inc/softengine/engine3d/objects/Mesh.h	/^class Mesh : public Object3D$/;"	c
+Object3D	softengine/inc/softengine/engine3d/core/Object3D.h	/^	Object3D () :$/;"	f	class:Object3D
+Object3D	softengine/inc/softengine/engine3d/core/Object3D.h	/^class Object3D$/;"	c
+PI	main.cpp	/^# define PI /;"	d	file:
+PI	main1.cpp	/^# define PI /;"	d	file:
+ParserBABYLON	softengine/inc/softengine/engine3d/parser/ParserBABYLON.h	/^class ParserBABYLON$/;"	c
+Scene	softengine/inc/softengine/engine3d/core/Scene.h	/^	Scene (const Object3D * root_container) :$/;"	f	class:Scene
+Scene	softengine/inc/softengine/engine3d/core/Scene.h	/^class Scene : public Mesh$/;"	c
+T	softengine/inc/softengine/math.h	/^			vector3 T; scalar_t _t;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:vector3
+VECTOR3_BACK	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_BACK = { .z = -1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_DOWN	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_DOWN = { .z = -1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_FORWARD	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_FORWARD = { .z = 1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_LEFT	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_LEFT = { .x = -1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_RIGHT	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_RIGHT = { .x = 1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_UP	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_UP = { .z = 1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_X	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_X = { .x = 1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_Y	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_Y = { .y = 1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_Z	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_Z = { .z = 1 };$/;"	v	typeref:typename:const struct vector3
+VECTOR3_ZERO	softengine/lib/vector3.c	/^const struct vector3 VECTOR3_ZERO = { 0 };$/;"	v	typeref:typename:const struct vector3
+X	softengine/inc/softengine/math.h	/^			vector3 X; scalar_t _x;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:vector3
+Y	softengine/inc/softengine/math.h	/^			vector3 Y; scalar_t _y;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:vector3
+Z	softengine/inc/softengine/math.h	/^			vector3 Z; scalar_t _z;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:vector3
+__SOFTENGINE_CORE_CAMERA3D_H	softengine/inc/softengine/engine3d/core/Camera3D.h	/^# define __SOFTENGINE_CORE_CAMERA3D_H$/;"	d
+__SOFTENGINE_CORE_GEOMETRY_H	softengine/inc/softengine/engine3d/core/Geometry.h	/^# define __SOFTENGINE_CORE_GEOMETRY_H$/;"	d
+__SOFTENGINE_CORE_OBJECT3D_H	softengine/inc/softengine/engine3d/core/Object3D.h	/^# define __SOFTENGINE_CORE_OBJECT3D_H$/;"	d
+__SOFTENGINE_CORE_SCENE_H	softengine/inc/softengine/engine3d/core/Scene.h	/^# define __SOFTENGINE_CORE_SCENE_H$/;"	d
+__SOFTENGINE_MATH_H	softengine/inc/softengine/math.h	/^# define __SOFTENGINE_MATH_H$/;"	d
+__SOFTENGINE_OBJECTS_MESH_H	softengine/inc/softengine/engine3d/objects/Mesh.h	/^# define __SOFTENGINE_OBJECTS_MESH_H$/;"	d
+__SOFTENGINE_PARSER_BABYLON_H	softengine/inc/softengine/engine3d/parser/ParserBABYLON.h	/^# define __SOFTENGINE_PARSER_BABYLON_H$/;"	d
+__SOFTENGINE_PRIMITIVES_BOX_H	softengine/inc/softengine/engine3d/primitives/Box.h	/^# define __SOFTENGINE_PRIMITIVES_BOX_H$/;"	d
+__SOFTENGINE_RENDERER_CVRENDERER_H	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^# define __SOFTENGINE_RENDERER_CVRENDERER_H$/;"	d
+__SOFTENGINE_RENDERER_IRENDERER_H	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^# define __SOFTENGINE_RENDERER_IRENDERER_H$/;"	d
+__anon2a138650010a	softengine/inc/softengine/math.h	/^	{$/;"	u	struct:matrix4
+__anon2a1386500208	softengine/inc/softengine/math.h	/^		{$/;"	s	union:matrix4::__anon2a138650010a
+__anon2a1386500308	softengine/inc/softengine/math.h	/^		{$/;"	s	union:matrix4::__anon2a138650010a
+__anon2a1386500408	softengine/inc/softengine/math.h	/^		{$/;"	s	union:matrix4::__anon2a138650010a
+_t	softengine/inc/softengine/math.h	/^			vector3 T; scalar_t _t;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:scalar_t
+_x	softengine/inc/softengine/math.h	/^			vector3 X; scalar_t _x;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:scalar_t
+_y	softengine/inc/softengine/math.h	/^			vector3 Y; scalar_t _y;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:scalar_t
+_z	softengine/inc/softengine/math.h	/^			vector3 Z; scalar_t _z;$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500408	typeref:typename:scalar_t
+_z	softengine/inc/softengine/math.h	/^	scalar_t _z;$/;"	m	struct:point	typeref:typename:scalar_t
+a	softengine/inc/softengine/math.h	/^	scalar_t a;$/;"	m	struct:color4	typeref:typename:scalar_t
+addChild	softengine/inc/softengine/engine3d/core/Object3D.h	/^	void addChild (Object3D * obj)$/;"	f	class:Object3D	typeref:typename:void
+b	softengine/inc/softengine/math.h	/^	unsigned char r, g, b;$/;"	m	struct:color4	typeref:typename:unsigned char
+background	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^	cv::Scalar background;$/;"	m	class:CvRenderer	typeref:typename:cv::Scalar
+canvas	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^	cv::Mat * canvas;$/;"	m	class:CvRenderer	typeref:typename:cv::Mat *
+canvas_height	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	const int canvas_height;$/;"	m	class:IRenderer	typeref:typename:const int
+canvas_width	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	const int canvas_width;$/;"	m	class:IRenderer	typeref:typename:const int
+check_depth_buffer	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	bool check_depth_buffer (point p)$/;"	f	class:IRenderer	typeref:typename:bool
+children	softengine/inc/softengine/engine3d/core/Object3D.h	/^	std::vector <std::shared_ptr <Object3D>> children;$/;"	m	class:Object3D	typeref:typename:std::vector<std::shared_ptr<Object3D>>
+clamp	softengine/lib/math.c	/^scalar_t clamp (scalar_t value, scalar_t min, scalar_t max)$/;"	f	typeref:typename:scalar_t
+clear_canvas	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^	virtual void clear_canvas ()$/;"	f	class:CvRenderer	typeref:typename:void
+clear_depth_buffer	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	void clear_depth_buffer ()$/;"	f	class:IRenderer	typeref:typename:void
+color4	softengine/inc/softengine/math.h	/^struct color4$/;"	s
+color4	softengine/inc/softengine/math.h	/^typedef struct color4 color4;$/;"	t	typeref:struct:color4
+create	softengine/inc/softengine/engine3d/core/Geometry.h	/^	void create (std::size_t num_vertices = 0, std::size_t num_faces = 0)$/;"	f	class:Geometry	typeref:typename:void
+depth_buffer	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	scalar_t * depth_buffer;$/;"	m	class:IRenderer	typeref:typename:scalar_t *
+destroy	softengine/inc/softengine/engine3d/core/Geometry.h	/^	void destroy ()$/;"	f	class:Geometry	typeref:typename:void
+draw_line	softengine/lib/Camera3D.cpp	/^void Camera3D :: draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c)$/;"	f	class:Camera3D	typeref:typename:void
+face	softengine/inc/softengine/engine3d/core/Geometry.h	/^struct face$/;"	s
+face	softengine/inc/softengine/math.h	/^typedef struct face face;$/;"	t	typeref:struct:face
+faces	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::vector <face> faces;$/;"	m	class:Geometry	typeref:typename:std::vector<face>
+g	softengine/inc/softengine/math.h	/^	unsigned char r, g, b;$/;"	m	struct:color4	typeref:typename:unsigned char
+geometry	softengine/inc/softengine/engine3d/objects/Mesh.h	/^	Geometry geometry;$/;"	m	class:Mesh	typeref:typename:Geometry
+interpolate	softengine/lib/math.c	/^scalar_t interpolate (scalar_t min, scalar_t max, scalar_t gradient)$/;"	f	typeref:typename:scalar_t
+m	softengine/inc/softengine/math.h	/^		scalar_t m [16];$/;"	m	union:matrix4::__anon2a138650010a	typeref:typename:scalar_t[16]
+m00	softengine/inc/softengine/math.h	/^				m00, m01, m02, m03,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m01	softengine/inc/softengine/math.h	/^				m00, m01, m02, m03,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m02	softengine/inc/softengine/math.h	/^				m00, m01, m02, m03,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m03	softengine/inc/softengine/math.h	/^				m00, m01, m02, m03,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m10	softengine/inc/softengine/math.h	/^				m10, m11, m12, m13,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m11	softengine/inc/softengine/math.h	/^				m10, m11, m12, m13,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m12	softengine/inc/softengine/math.h	/^				m10, m11, m12, m13,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m13	softengine/inc/softengine/math.h	/^				m10, m11, m12, m13,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m20	softengine/inc/softengine/math.h	/^				m20, m21, m22, m23,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m21	softengine/inc/softengine/math.h	/^				m20, m21, m22, m23,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m22	softengine/inc/softengine/math.h	/^				m20, m21, m22, m23,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m23	softengine/inc/softengine/math.h	/^				m20, m21, m22, m23,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m30	softengine/inc/softengine/math.h	/^				m30, m31, m32, m33$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m31	softengine/inc/softengine/math.h	/^				m30, m31, m32, m33$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m32	softengine/inc/softengine/math.h	/^				m30, m31, m32, m33$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+m33	softengine/inc/softengine/math.h	/^				m30, m31, m32, m33$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500208	typeref:typename:scalar_t
+main	main.cpp	/^int main ()$/;"	f	typeref:typename:int
+main	main1.cpp	/^int main ()$/;"	f	typeref:typename:int
+matrix4	softengine/inc/softengine/math.h	/^struct matrix4$/;"	s
+matrix4	softengine/inc/softengine/math.h	/^typedef struct matrix4 matrix4;$/;"	t	typeref:struct:matrix4
+matrix4_equals	softengine/lib/matrix4.c	/^_Bool matrix4_equals (matrix4 a, matrix4 b)$/;"	f	typeref:typename:_Bool
+matrix4_mul	softengine/lib/matrix4.c	/^struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)$/;"	f	typeref:struct:matrix4
+matrix4_translate	softengine/lib/matrix4.c	/^struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scalar_t z)$/;"	f	typeref:struct:matrix4
+name	softengine/inc/softengine/engine3d/core/Object3D.h	/^	std::string name;$/;"	m	class:Object3D	typeref:typename:std::string
+normal	softengine/inc/softengine/engine3d/core/Geometry.h	/^	vector3 normal;$/;"	m	struct:vertex	typeref:typename:vector3
+num_faces	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::size_t num_faces;$/;"	m	class:Geometry	typeref:typename:std::size_t
+num_vertices	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::size_t num_vertices;$/;"	m	class:Geometry	typeref:typename:std::size_t
+num_vertices	softengine/lib/Scene.cpp	/^static std::size_t num_vertices = 0;$/;"	v	typeref:typename:std::size_t	file:
+parse	softengine/lib/ParserBABYLON.cpp	/^Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)$/;"	f	class:ParserBABYLON	typeref:typename:Object3D *
+perspective_projector	softengine/lib/matrix4.c	/^struct matrix4 perspective_projector (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspe/;"	f	typeref:struct:matrix4
+point	softengine/inc/softengine/math.h	/^struct point$/;"	s
+point	softengine/inc/softengine/math.h	/^typedef struct point point;$/;"	t	typeref:struct:point
+position	softengine/inc/softengine/engine3d/core/Geometry.h	/^	vector3 position;$/;"	m	struct:vertex	typeref:typename:vector3
+position	softengine/inc/softengine/engine3d/core/Object3D.h	/^	vector3 position;$/;"	m	class:Object3D	typeref:typename:vector3
+project	softengine/lib/Camera3D.cpp	/^vector3 Camera3D :: project (vector3 v)$/;"	f	class:Camera3D	typeref:typename:vector3
+projector	softengine/inc/softengine/engine3d/core/Camera3D.h	/^	matrix4 projector;$/;"	m	class:Camera3D	typeref:typename:matrix4
+put_pixel	softengine/inc/softengine/engine3d/renderer/CvRenderer.h	/^	virtual void put_pixel (point p, color4 c)$/;"	f	class:CvRenderer	typeref:typename:void
+put_pixel	softengine/lib/Camera3D.cpp	/^void Camera3D :: put_pixel (point p, color4 c)$/;"	f	class:Camera3D	typeref:typename:void
+r	softengine/inc/softengine/math.h	/^	unsigned char r, g, b;$/;"	m	struct:color4	typeref:typename:unsigned char
+render	softengine/lib/Camera3D.cpp	/^void Camera3D :: render (const Scene & scene)$/;"	f	class:Camera3D	typeref:typename:void
+renderer	softengine/inc/softengine/engine3d/core/Camera3D.h	/^	std::shared_ptr <IRenderer> renderer;$/;"	m	class:Camera3D	typeref:typename:std::shared_ptr<IRenderer>
+renderer_ch	softengine/inc/softengine/engine3d/core/Camera3D.h	/^	int renderer_ch;$/;"	m	class:Camera3D	typeref:typename:int
+renderer_cw	softengine/inc/softengine/engine3d/core/Camera3D.h	/^	int renderer_cw;$/;"	m	class:Camera3D	typeref:typename:int
+root_container	softengine/inc/softengine/engine3d/core/Scene.h	/^	const Object3D * root_container;$/;"	m	class:Scene	typeref:typename:const Object3D *
+rotation	softengine/inc/softengine/engine3d/core/Object3D.h	/^	vector3 rotation;$/;"	m	class:Object3D	typeref:typename:vector3
+scalar_t	softengine/inc/softengine/math.h	/^typedef long double scalar_t;$/;"	t	typeref:typename:long double
+scale	softengine/inc/softengine/engine3d/core/Object3D.h	/^	vector3 scale;$/;"	m	class:Object3D	typeref:typename:vector3
+tw	softengine/inc/softengine/math.h	/^				tx, ty, tz, tw$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+tx	softengine/inc/softengine/math.h	/^				tx, ty, tz, tw$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+ty	softengine/inc/softengine/math.h	/^				tx, ty, tz, tw$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+tz	softengine/inc/softengine/math.h	/^				tx, ty, tz, tw$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+update	softengine/lib/Scene.cpp	/^void Scene :: update ()$/;"	f	class:Scene	typeref:typename:void
+update	softengine/lib/Scene.cpp	/^void Scene :: update (const Object3D * container, matrix4 transform)$/;"	f	class:Scene	typeref:typename:void
+update_sizes	softengine/inc/softengine/engine3d/core/Geometry.h	/^	void update_sizes ()$/;"	f	class:Geometry	typeref:typename:void
+v1	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::size_t v1, v2, v3;$/;"	m	struct:face	typeref:typename:std::size_t
+v2	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::size_t v1, v2, v3;$/;"	m	struct:face	typeref:typename:std::size_t
+v3	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::size_t v1, v2, v3;$/;"	m	struct:face	typeref:typename:std::size_t
+vector3	softengine/inc/softengine/math.h	/^struct vector3$/;"	s
+vector3	softengine/inc/softengine/math.h	/^typedef struct vector3 vector3;$/;"	t	typeref:struct:vector3
+vector3_add	softengine/lib/vector3.c	/^struct vector3 vector3_add (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:struct:vector3
+vector3_angle	softengine/lib/vector3.c	/^scalar_t vector3_angle (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:typename:scalar_t
+vector3_anglecos	softengine/lib/vector3.c	/^scalar_t vector3_anglecos (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:typename:scalar_t
+vector3_anglesin	softengine/lib/vector3.c	/^scalar_t vector3_anglesin (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:typename:scalar_t
+vector3_cross	softengine/lib/vector3.c	/^struct vector3 vector3_cross (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:struct:vector3
+vector3_dist	softengine/lib/vector3.c	/^scalar_t vector3_dist (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:typename:scalar_t
+vector3_distsqr	softengine/lib/vector3.c	/^scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:typename:scalar_t
+vector3_dot	softengine/lib/vector3.c	/^scalar_t vector3_dot (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:typename:scalar_t
+vector3_length	softengine/lib/vector3.c	/^scalar_t vector3_length (struct vector3 v)$/;"	f	typeref:typename:scalar_t
+vector3_lengthsqr	softengine/lib/vector3.c	/^scalar_t vector3_lengthsqr (struct vector3 v)$/;"	f	typeref:typename:scalar_t
+vector3_negative	softengine/lib/vector3.c	/^struct vector3 vector3_negative (struct vector3 v)$/;"	f	typeref:struct:vector3
+vector3_normalized	softengine/lib/vector3.c	/^struct vector3 vector3_normalized (struct vector3 v)$/;"	f	typeref:struct:vector3
+vector3_scale	softengine/lib/vector3.c	/^struct vector3 vector3_scale (struct vector3 v, scalar_t s)$/;"	f	typeref:struct:vector3
+vector3_sub	softengine/lib/vector3.c	/^struct vector3 vector3_sub (struct vector3 v1, struct vector3 v2)$/;"	f	typeref:struct:vector3
+vector3_transform	softengine/lib/vector3.c	/^struct vector3 vector3_transform (struct vector3 v, struct matrix4 m)$/;"	f	typeref:struct:vector3
+vertex	softengine/inc/softengine/engine3d/core/Geometry.h	/^struct vertex$/;"	s
+vertex	softengine/inc/softengine/math.h	/^typedef struct vertex vertex;$/;"	t	typeref:struct:vertex
+vertices	softengine/inc/softengine/engine3d/core/Geometry.h	/^	std::vector <vertex> vertices;$/;"	m	class:Geometry	typeref:typename:std::vector<vertex>
+view_height	main.cpp	/^const int view_height = 460;$/;"	v	typeref:typename:const int
+view_height	main1.cpp	/^const int view_height = 460;$/;"	v	typeref:typename:const int
+view_width	main.cpp	/^const int view_width = 640;$/;"	v	typeref:typename:const int
+view_width	main1.cpp	/^const int view_width = 640;$/;"	v	typeref:typename:const int
+x	softengine/inc/softengine/math.h	/^	int x, y;$/;"	m	struct:point	typeref:typename:int
+x	softengine/inc/softengine/math.h	/^	scalar_t x, y, z;$/;"	m	struct:vector3	typeref:typename:scalar_t
+xw	softengine/inc/softengine/math.h	/^				xx, xy, xz, xw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+xx	softengine/inc/softengine/math.h	/^				xx, xy, xz, xw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+xy	softengine/inc/softengine/math.h	/^				xx, xy, xz, xw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+xz	softengine/inc/softengine/math.h	/^				xx, xy, xz, xw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+y	softengine/inc/softengine/math.h	/^	int x, y;$/;"	m	struct:point	typeref:typename:int
+y	softengine/inc/softengine/math.h	/^	scalar_t x, y, z;$/;"	m	struct:vector3	typeref:typename:scalar_t
+yw	softengine/inc/softengine/math.h	/^				yx, yy, yz, yw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+yx	softengine/inc/softengine/math.h	/^				yx, yy, yz, yw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+yy	softengine/inc/softengine/math.h	/^				yx, yy, yz, yw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+yz	softengine/inc/softengine/math.h	/^				yx, yy, yz, yw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+z	softengine/inc/softengine/math.h	/^	scalar_t x, y, z;$/;"	m	struct:vector3	typeref:typename:scalar_t
+zw	softengine/inc/softengine/math.h	/^				zx, zy, zz, zw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+zx	softengine/inc/softengine/math.h	/^				zx, zy, zz, zw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+zy	softengine/inc/softengine/math.h	/^				zx, zy, zz, zw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+zz	softengine/inc/softengine/math.h	/^				zx, zy, zz, zw,$/;"	m	struct:matrix4::__anon2a138650010a::__anon2a1386500308	typeref:typename:scalar_t
+~IRenderer	softengine/inc/softengine/engine3d/renderer/IRenderer.h	/^	virtual ~IRenderer ()$/;"	f	class:IRenderer
+~Object3D	softengine/inc/softengine/engine3d/core/Object3D.h	/^	virtual ~Object3D () {}$/;"	f	class:Object3D

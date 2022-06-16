@@ -24,6 +24,15 @@ struct vector3 vector3_transform (struct vector3 v, struct matrix4 m)
 	};
 }
 
+struct vector3 vector3_transform_normal (struct vector3 v, struct matrix4 m)
+{
+	return (struct vector3) {
+		(v.x * m.xx + v.y * m.yx + v.z * m.zx),
+		(v.x * m.xy + v.y * m.yy + v.z * m.zy),
+		(v.x * m.xz + v.y * m.yz + v.z * m.zz)
+	};
+}
+
 struct vector3 vector3_scale (struct vector3 v, scalar_t s)
 {
 	return (struct vector3) {
@@ -77,12 +86,12 @@ scalar_t vector3_angle (struct vector3 v1, struct vector3 v2)
 	return acos (vector3_dot (v1, v2) / vector3_length (v1) / vector3_length (v2));
 }
 
-scalar_t vector3_anglecos (struct vector3 v1, struct vector3 v2)
+scalar_t vector3_cos (struct vector3 v1, struct vector3 v2)
 {
 	return vector3_dot (v1, v2) / vector3_length (v1) / vector3_length (v2);
 }
 
-scalar_t vector3_anglesin (struct vector3 v1, struct vector3 v2)
+scalar_t vector3_sin (struct vector3 v1, struct vector3 v2)
 {
 	return vector3_length (vector3_cross (v1, v2)) / vector3_length (v1) / vector3_length (v2);
 }

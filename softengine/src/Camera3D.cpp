@@ -1,3 +1,4 @@
+# include <algorithm>
 # include <utility>
 # include <vector>
 
@@ -44,6 +45,9 @@ vector3 Camera3D :: project (vector3 v)
 void Camera3D :: render (const Scene & scene)
 {
 	renderer->clear_canvas ();
+	// std::fill (depth_buffer.begin (), depth_buffer.end (), std::numeric_limits <scalar_t> :: infinity ());
+	// std::fill (bmp, { 0xff, 0x80, 0x00 });
+	for (int i = 0; i < renderer_cs; i++);
 
 	matrix4 transform = MATRIX4_TRANSFORM (
 		vector3_negative (position),
@@ -54,7 +58,6 @@ void Camera3D :: render (const Scene & scene)
 	const Geometry & geometry = scene.geometry;
 
 	vector3 * vertices_transformed = new vector3 [geometry.num_vertices];
-	vector3 * normals_transformed = new vector3 [geometry.num_vertices];
 	vector3 * vertices_projected = new vector3 [geometry.num_vertices];
 
 	/* TODO: OPTIMISATIONS TO BE DONE:
@@ -69,7 +72,6 @@ void Camera3D :: render (const Scene & scene)
 	for (int i = 0; i < geometry.num_vertices; i++)
 	{
 		vertices_transformed [i] = vector3_transform (geometry.vertices [i].position, transform);
-		normals_transformed [i] = vector3_transform (geometry.vertices [i].normal, transform);
 		vertices_projected [i] = project (vertices_transformed [i]);
 	}
 
@@ -81,8 +83,6 @@ void Camera3D :: render (const Scene & scene)
 		const vector3 * v1 = vertices_projected + geometry.faces [i].v1;
 		const vector3 * v2 = vertices_projected + geometry.faces [i].v2;
 		const vector3 * v3 = vertices_projected + geometry.faces [i].v3;
-
-		vector3 face_normal;
 
 		if (v2->y < v1->y)
 			std::swap (v1, v2);
@@ -150,6 +150,10 @@ draw_scan_line:
 			int x;
 			scalar_t z;
 
+			vector3 light = {10, 10, -10};
+			vector3 c, n;
+			unsigned char color;
+
 			for (x = sx; x <= ex; x++)
 			{
 				z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
@@ -157,27 +161,38 @@ draw_scan_line:
 				{
 					// per face computations there...
 
-					// vector3 beg = vector3_scale (
-					//     vector3_add (
-					//         vector3_add (
-					//             vertices_transformed [geometry.faces [i].v1],
-					//             vertices_transformed [geometry.faces [i].v2]
-					//         ),
-					//         vertices_transformed [geometry.faces [i].v3]
-					//     ),
-					//     1.0l / 3
-					// );
-                    //
-					// vector3 end = vector3_scale (
-					//     vector3_add (
-					//         vector3_add (
-					//             geometry.vertices [geometry.faces [i].v1].normal,
-					//             geometry.vertices [geometry.faces [i].v2].normal
-					//         ),
-					//         geometry.vertices [geometry.faces [i].v3].normal
-					//     ),
-					//     1.0l / 3
-					// );
+					// TODO: do this in Scene.cpp
+
+					c = vector3_scale (
+						vector3_add (
+							geometry.vertices [geometry.faces [i].v1].position,
+							vector3_add (
+								geometry.vertices [geometry.faces [i].v2].position,
+								geometry.vertices [geometry.faces [i].v3].position
+							)
+						),
+						1.l / 3
+					);
+
+					n = vector3_scale (
+						vector3_add (
+							geometry.vertices [geometry.faces [i].v1].normal,
+							vector3_add (
+								geometry.vertices [geometry.faces [i].v2].normal,
+								geometry.vertices [geometry.faces [i].v3].normal
+							)
+						),
+						1.l / 3
+					);
+
+					vector3 l = vector3_sub (light, c);
+					scalar_t cosa = vector3_cos (n, l);
+					scalar_t a = clamp (cosa, 0, 1);
+					color = a * 0xFF;
+
+					// vector3 v = project (vector3_transform (c, transform));
+					// if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
+					//     renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0, 0});
 
 					goto __handle_pixel;
 				}
@@ -191,7 +206,7 @@ draw_scan_line:
 __handle_pixel:
 					// per pixel computations there...
 
-					renderer->put_pixel ({x, y, z}, {r, g, b});
+					renderer->put_pixel ({x, y, z}, {color, color, color});
 				}
 			}
 		}
@@ -214,9 +229,19 @@ __handle_pixel:
 		draw_line (v1.x, v1.y, v2.x, v2.y, {0, 0, 0});
 		draw_line (v2.x, v2.y, v3.x, v3.y, {0, 0, 0});
 		draw_line (v3.x, v3.y, v1.x, v1.y, {0, 0, 0});
+
+		// vector3 c = vector3_scale ({
+		//     vertices_transformed [geometry.faces [i].v1].x + vertices_transformed [geometry.faces [i].v2].x + vertices_transformed [geometry.faces [i].v3].x,
+		//     vertices_transformed [geometry.faces [i].v1].y + vertices_transformed [geometry.faces [i].v2].y + vertices_transformed [geometry.faces [i].v3].y,
+		//     vertices_transformed [geometry.faces [i].v1].z + vertices_transformed [geometry.faces [i].v2].z + vertices_transformed [geometry.faces [i].v3].z
+		// }, 1./3);
+        //
+		// vector3 v = project (c);
+		// if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
+		//     renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0, 0});
 	}
 
-	for (int i = 0; i < geometry.num_faces; i++)
+	for (int i = 0; i < geometry.num_vertices; i++)
 	{
 		break;
 		const vector3 & v = vertices_projected [i];
@@ -225,7 +250,5 @@ __handle_pixel:
 	}
 
 	delete [] vertices_transformed;
-	delete [] normals_transformed;
 	delete [] vertices_projected;
-
 }

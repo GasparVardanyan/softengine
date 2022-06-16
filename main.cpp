@@ -29,12 +29,14 @@ int main ()
 {
 	cv::Scalar background (0x66, 0x44, 0x22);
 	cv::Mat scene (cv::Size (view_width, view_height), CV_8UC3, background);
+	cv::Mat scene1 (cv::Size (view_width, view_height), CV_8UC3, background);
 	cv::Mat blank (cv::Size (view_width, view_height), CV_8UC3, background);
 
 	Object3D rootContainer;
 	Scene scene3d (& rootContainer);
 
 	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
+	Camera3D camera1 (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene1, background)));
 
 # ifdef BOX
 	// Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
@@ -59,19 +61,27 @@ int main ()
 	rootContainer.addChild (monkey);
 # endif // MONKEY
 
+	camera1.position.y = 3;
+	camera1.position.z = -3;
+	camera1.rotation.x = 25 * PI / 180;
+
 	while (true)
 	{
 		scene3d.update ();
+
 		camera.render (scene3d);
 		cv::imshow ("softengine", scene);
+
+		// camera1.render (scene3d);
+		// cv::imshow ("softengine1", scene1);
 
 		char key = cv::waitKey (1);
 		if (key == 'q')
 			break;
 
 # ifdef BOX
-		// box->rotation.x += .01;
-		// box->rotation.y += .01;
+		box->rotation.x += .01;
+		box->rotation.y += .01;
 		// std::cout << box->rotation.x << " - " << box->rotation.y << std::endl;
 # endif // BOX
 

@@ -1,2 +1,2 @@
-noremap <F5> :w\|!./cvtest<cr>
-inoremap <F5> <Esc>:w\|!./cvtest<cr>a
+noremap <F5> :w\|!$PWD/cvtest<cr>
+inoremap <F5> <Esc>:w\|!$PWD/cvtest<cr>a

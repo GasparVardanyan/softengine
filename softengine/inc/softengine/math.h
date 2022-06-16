@@ -55,6 +55,7 @@ extern const struct vector3 VECTOR3_FORWARD;
 extern const struct vector3 VECTOR3_BACK;
 
 struct vector3 vector3_transform (struct vector3 v, struct matrix4 m);
+struct vector3 vector3_transform_normal (struct vector3 v, struct matrix4 m);
 struct vector3 vector3_scale (struct vector3 v, scalar_t s);
 struct vector3 vector3_negative (struct vector3 v);
 scalar_t vector3_length (struct vector3 v);
@@ -63,8 +64,8 @@ struct vector3 vector3_normalized (struct vector3 v);
 scalar_t vector3_dot (struct vector3 v1, struct vector3 v2);
 struct vector3 vector3_cross (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_angle (struct vector3 v1, struct vector3 v2);
-scalar_t vector3_anglecos (struct vector3 v1, struct vector3 v2);
-scalar_t vector3_anglesin (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_cos (struct vector3 v1, struct vector3 v2);
+scalar_t vector3_sin (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2);
 scalar_t vector3_dist (struct vector3 v1, struct vector3 v2);
 struct vector3 vector3_add (struct vector3 v1, struct vector3 v2);
@@ -72,39 +73,36 @@ struct vector3 vector3_sub (struct vector3 v1, struct vector3 v2);
 
 
 
-struct matrix4
+struct matrix4 { union
 {
-	union
+	struct
 	{
-		struct
-		{
-			scalar_t
-				m00, m01, m02, m03,
-				m10, m11, m12, m13,
-				m20, m21, m22, m23,
-				m30, m31, m32, m33
-			;
-		};
-		scalar_t m [16];
-
-		struct
-		{
-			scalar_t
-				xx, xy, xz, xw,
-				yx, yy, yz, yw,
-				zx, zy, zz, zw,
-				tx, ty, tz, tw
-			;
-		};
-		struct
-		{
-			vector3 X; scalar_t _x;
-			vector3 Y; scalar_t _y;
-			vector3 Z; scalar_t _z;
-			vector3 T; scalar_t _t;
-		};
+		scalar_t
+			m00, m01, m02, m03,
+			m10, m11, m12, m13,
+			m20, m21, m22, m23,
+			m30, m31, m32, m33
+		;
 	};
-};
+	scalar_t m [16];
+
+	struct
+	{
+		scalar_t
+			xx, xy, xz, xw,
+			yx, yy, yz, yw,
+			zx, zy, zz, zw,
+			tx, ty, tz, tw
+		;
+	};
+	struct
+	{
+		vector3 X; scalar_t _x;
+		vector3 Y; scalar_t _y;
+		vector3 Z; scalar_t _z;
+		vector3 T; scalar_t _t;
+	};
+}; };
 
 extern const struct matrix4 MATRIX4_IDENTITY;
 extern const struct matrix4 MATRIX4_ZERO;

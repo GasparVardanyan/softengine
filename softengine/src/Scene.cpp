@@ -21,7 +21,7 @@ void Scene :: update (const Object3D * container, matrix4 transform)
 		{
 			this->geometry.vertices.push_back ({
 				vector3_transform (v.position, transform),
-				v.normal
+				vector3_transform_normal (v.normal, transform)
 			});
 		}
 

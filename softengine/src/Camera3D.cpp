@@ -91,8 +91,6 @@ void Camera3D :: render (const Scene & scene)
 		if (v3->y < v2->y)
 			std::swap (v2, v3);
 
-		// v1 - top, v2 - mid, v3 - bot
-
 		scalar_t yd23 = v2->y - v3->y;
 		scalar_t yd31 = v3->y - v1->y;
 		scalar_t yd21 = v2->y - v1->y;
@@ -123,7 +121,38 @@ void Camera3D :: render (const Scene & scene)
 				y2 = renderer_ch;
 		}
 
+		// v1, v2, v3 - top, mid, bot
+
+
+
+		vector3 light = {0, 10, -3};
+
+		scalar_t nal1 = vector3_cos (
+			geometry.vertices [geometry.faces [i].v1].normal,
+			vector3_sub (
+				light,
+				geometry.vertices [geometry.faces [i].v1].position
+			)
+		);
+		scalar_t nal2 = vector3_cos (
+			geometry.vertices [geometry.faces [i].v2].normal,
+			vector3_sub (
+				light,
+				geometry.vertices [geometry.faces [i].v2].position
+			)
+		);
+		scalar_t nal3 = vector3_cos (
+			geometry.vertices [geometry.faces [i].v3].normal,
+			vector3_sub (
+				light,
+				geometry.vertices [geometry.faces [i].v3].position
+			)
+		);
+
+		scalar_t nala, nalb, nalc, nald;
+
 		va = v1, vb = v3, vc = v1, vd = v2, yds = yd31, yde = yd21;
+		nala = nal1, nalb = nal3, nalc = nal1, nald = nal2;
 
 		int ys = y1, ye = y2;
 
@@ -138,10 +167,14 @@ draw_scan_line:
 			scalar_t sz = interpolate (va->z, vb->z, sg);
 			scalar_t ez = interpolate (vc->z, vd->z, eg);
 
+			scalar_t nals = interpolate (nala, nalb, sg);
+			scalar_t nale = interpolate (nalc, nald, eg);
+
 			if (sx > ex)
 			{
 				std::swap (sx, ex);
 				std::swap (sz, ez);
+				std::swap (nals, nale);
 			}
 
 			if (sx < 0) sx = 0;
@@ -150,62 +183,51 @@ draw_scan_line:
 			int x;
 			scalar_t z;
 
-			vector3 light = {10, 10, -10};
 			vector3 c, n;
 			unsigned char color;
+
+			// per face computations there...
+
+			// TODO: do this in Scene.cpp
+
+			// c = vector3_scale (
+			//     vector3_add (
+			//         geometry.vertices [geometry.faces [i].v1].position,
+			//         vector3_add (
+			//             geometry.vertices [geometry.faces [i].v2].position,
+			//             geometry.vertices [geometry.faces [i].v3].position
+			//         )
+			//     ),
+			//     1.l / 3
+			// );
+			//
+			// n = vector3_scale (
+			//     vector3_add (
+			//         geometry.vertices [geometry.faces [i].v1].normal,
+			//         vector3_add (
+			//             geometry.vertices [geometry.faces [i].v2].normal,
+			//             geometry.vertices [geometry.faces [i].v3].normal
+			//         )
+			//     ),
+			//     1.l / 3
+			// );
+			//
+			// vector3 l = vector3_sub (light, c);
+			// scalar_t cosa = vector3_cos (n, l);
+			// scalar_t a = clamp (cosa, 0, 1);
+			// color = a * 0xFF;
+
+			// vector3 v = project (vector3_transform (c, transform));
+			// if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
+			//     renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0, 0});
 
 			for (x = sx; x <= ex; x++)
 			{
 				z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
+				scalar_t nal = interpolate (nals, nale, (scalar_t) (x - sx) / (ex - sx));
+				color = clamp (nal, 0, 1) * 0xFF;
 				if (renderer->check_depth_buffer ({x, y, z}))
 				{
-					// per face computations there...
-
-					// TODO: do this in Scene.cpp
-
-					c = vector3_scale (
-						vector3_add (
-							geometry.vertices [geometry.faces [i].v1].position,
-							vector3_add (
-								geometry.vertices [geometry.faces [i].v2].position,
-								geometry.vertices [geometry.faces [i].v3].position
-							)
-						),
-						1.l / 3
-					);
-
-					n = vector3_scale (
-						vector3_add (
-							geometry.vertices [geometry.faces [i].v1].normal,
-							vector3_add (
-								geometry.vertices [geometry.faces [i].v2].normal,
-								geometry.vertices [geometry.faces [i].v3].normal
-							)
-						),
-						1.l / 3
-					);
-
-					vector3 l = vector3_sub (light, c);
-					scalar_t cosa = vector3_cos (n, l);
-					scalar_t a = clamp (cosa, 0, 1);
-					color = a * 0xFF;
-
-					// vector3 v = project (vector3_transform (c, transform));
-					// if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
-					//     renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0, 0});
-
-					goto __handle_pixel;
-				}
-			}
-
-			for (; x <= ex; x++)
-			{
-				z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
-				if (renderer->check_depth_buffer ({x, y, z}))
-				{
-__handle_pixel:
-					// per pixel computations there...
-
 					renderer->put_pixel ({x, y, z}, {color, color, color});
 				}
 			}
@@ -215,6 +237,7 @@ __handle_pixel:
 		{
 			vc = v3, yde = yd23;
 			ys = y2; ye = y3;
+			nalc = nal3;
 			goto draw_scan_line;
 		}
 	}

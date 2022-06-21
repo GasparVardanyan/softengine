@@ -10,13 +10,10 @@ typedef long double scalar_t;
 struct vector3;
 struct matrix4;
 struct color4;
-struct face;
 
 typedef struct vector3 vector3;
 typedef struct matrix4 matrix4;
 typedef struct color4 color4;
-typedef struct vertex vertex;
-typedef struct face face;
 typedef struct point point;
 
 scalar_t clamp (scalar_t value, scalar_t min, scalar_t max);

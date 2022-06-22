@@ -1,4 +1,3 @@
-# include <iostream>
 # include "softengine/engine3d/core/Scene.h"
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/math.h"
@@ -42,10 +41,10 @@ void Scene :: update (Object3D * container, matrix4 transform)
 		_num_vertices += g->num_vertices;
 		_num_faces += g->num_faces;
 	}
-	// else if (dynamic_cast <PointLight *> (container) != nullptr)
-	// {
-	//     this->point_lights [_i_point_lights++] = ((PointLight *) container);
-	// }
+	else if (dynamic_cast <PointLight *> (container) != nullptr)
+	{
+		this->point_lights [_i_point_lights++] = ((const PointLight *) container);
+	}
 
 	// TODO: Object3D type ENUMMMMMMMM
 
@@ -61,10 +60,10 @@ void Scene :: prepare (const Object3D * container)
 		_num_vertices += g->num_vertices;
 		_num_faces += g->num_faces;
 	}
-	// else if (dynamic_cast <const PointLight *> (container) != nullptr)
-	// {
-	//     _num_point_lights++;
-	// }
+	else if (dynamic_cast <const PointLight *> (container) != nullptr)
+	{
+		num_point_lights++;
+	}
 
 	for (auto obj : container->children)
 		prepare (obj.get ());
@@ -73,19 +72,19 @@ void Scene :: prepare (const Object3D * container)
 void Scene :: update ()
 {
 	if (this->geometry)
-		delete this->geometry, this->geometry = nullptr;
-	// if (this->point_lights)
-	//     delete [] this->point_lights;
+		delete this->geometry;
+	if (this->point_lights)
+		delete [] this->point_lights;
 
 	_num_vertices = 0;
 	_num_faces = 0;
 	_i_vertices = 0;
 	_i_faces = 0;
-	_num_point_lights = 0;
+	num_point_lights = 0;
 	_i_point_lights = 0;
 	prepare (root_container);
 
 	this->geometry = new Geometry (_num_vertices, _num_faces);
-	// this->point_lights = new PointLight * [_num_point_lights];
+	this->point_lights = new const PointLight * [num_point_lights];
 	update (root_container);
 }

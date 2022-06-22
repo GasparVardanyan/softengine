@@ -140,9 +140,7 @@ void Camera3D :: render (const Scene & scene)
 
 
 
-		vector3 light = {0, 10, -3};
-
-		std::size_t point_lights_count = 1;
+		std::size_t point_lights_count = scene.num_point_lights;
 
 		scalar_t ndotl1 = 1, ndotl2 = 1, ndotl3 = 1;
 
@@ -152,7 +150,7 @@ void Camera3D :: render (const Scene & scene)
 				v1 -> normal,
 				vector3_normalized (
 					vector3_sub (
-						{0, 10, -3},
+						scene.point_lights [i]->transform.T,
 						v1 -> position
 					)
 				)
@@ -161,7 +159,7 @@ void Camera3D :: render (const Scene & scene)
 				v2 -> normal,
 				vector3_normalized (
 					vector3_sub (
-						{0, 10, -3},
+						scene.point_lights [i]->transform.T,
 						v2 -> position
 					)
 				)
@@ -170,7 +168,7 @@ void Camera3D :: render (const Scene & scene)
 				v3 -> normal,
 				vector3_normalized (
 					vector3_sub (
-						{0, 10, -3},
+						scene.point_lights [i]->transform.T,
 						v3 -> position
 					)
 				)

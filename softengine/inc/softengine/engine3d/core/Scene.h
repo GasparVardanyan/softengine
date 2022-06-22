@@ -13,13 +13,12 @@ class Scene// : public Mesh
 
 protected:
 	Geometry * geometry;
-	PointLight ** point_lights;
+	const PointLight ** point_lights;
 
 	std::size_t _num_vertices;
 	std::size_t _num_faces;
 	std::size_t _i_vertices;
 	std::size_t _i_faces;
-	std::size_t _num_point_lights;
 	std::size_t _i_point_lights;
 
 	void update (Object3D * container, matrix4 transform = MATRIX4_IDENTITY);
@@ -27,6 +26,7 @@ protected:
 
 public:
 	Object3D * root_container;
+	std::size_t num_point_lights;
 
 	Scene (Object3D * root_container) :
 		root_container (root_container),
@@ -34,7 +34,7 @@ public:
 		_num_faces (0),
 		_i_vertices (0),
 		_i_faces (0),
-		_num_point_lights (0),
+		num_point_lights (0),
 		_i_point_lights (0),
 		geometry (nullptr),
 		point_lights (nullptr)

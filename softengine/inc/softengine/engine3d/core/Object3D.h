@@ -10,6 +10,7 @@
 class Object3D
 {
 	friend class Scene;
+	friend class Camera3D;
 protected:
 	matrix4 transform;
 public:

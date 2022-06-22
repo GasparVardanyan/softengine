@@ -17,8 +17,8 @@
 const int view_width = 640;
 const int view_height = 460;
 
-// # define BOX
-# define MONKEY
+# define BOX
+// # define MONKEY
 
 /*
  * TODO: camera transformation works wrong... implement mat4 lookAt
@@ -43,8 +43,8 @@ int main ()
 	Box * box = new Box (2, 2, 2);
 	box->position.z = 15;
 
-	box->rotation.x = -15 * PI / 180;
-	box->rotation.y = -15 * PI / 180;
+	// box->rotation.x = -15 * PI / 180;
+	// box->rotation.y = -15 * PI / 180;
 
 	// box->rotation.x = box->rotation.y = .69;
 	rootContainer.addChild (box);
@@ -65,11 +65,12 @@ int main ()
 	camera1.position.z = -3;
 	camera1.rotation.x = 25 * PI / 180;
 
+
+		scene3d.update ();
+		camera.render (scene3d);
 	while (true)
 	{
-		scene3d.update ();
-
-		camera.render (scene3d);
+		// std::cout << scene3d.geometry->num_vertices << std::endl;
 		cv::imshow ("softengine", scene);
 
 		// camera1.render (scene3d);

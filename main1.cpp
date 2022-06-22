@@ -8,6 +8,7 @@
 # include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/core/Object3D.h"
 # include "softengine/engine3d/core/Scene.h"
+# include "softengine/engine3d/lights/PointLight.h"
 # include "softengine/engine3d/parser/ParserBABYLON.h"
 # include "softengine/engine3d/primitives/Box.h"
 # include "softengine/engine3d/renderer/CvRenderer.h"
@@ -28,12 +29,11 @@ int main ()
 
 	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
 
-	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
-	box->position.z = 6;
-	// box->rotation.z = 45 * PI / 180;
 
-	// box->rotation.x = -15 * PI / 180;
-	// rootContainer.addChild (box);
+	PointLight * light = new PointLight;
+	light->position = {0, 10, -3};
+	rootContainer.addChild (light);
+
 
 	std::ifstream monbab ("monkey.babylon", std::ifstream::binary);
 	Json::Value monbin;
@@ -41,8 +41,18 @@ int main ()
 
 	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1, 1, 1));
 	monkey->position.z = 15;
-	monkey->addChild (box);
 	rootContainer.addChild (monkey);
+
+	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
+	box->position.y = 3;
+	// box->rotation.z = 45 * PI / 180;
+
+	// box->rotation.x = -15 * PI / 180;
+	// rootContainer.addChild (box);
+	monkey->addChild (box);
+	box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (-45 * PI / 180));
+	box->position.y = 3;
+	monkey->addChild (box);
 
 	int fps = 0; // loop's fps, not the camera's :d
 
@@ -59,10 +69,11 @@ int main ()
 		if (key == 'q')
 			break;
 
-		box->rotation.x += .01;
-		box->rotation.y += .01;
+		// box->rotation.x += .01;
+		// box->rotation.y += .01;
 
 		monkey->rotation.y += .01;
+		monkey->rotation.z += .01;
 
 		fps++;
 

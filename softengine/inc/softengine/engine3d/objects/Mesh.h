@@ -11,7 +11,16 @@ class Mesh : public Object3D
 	friend class ParserBABYLON;
 
 protected:
-	Geometry geometry;
+	Geometry * geometry;
+
+public:
+	Mesh () : geometry (nullptr) {}
+
+	virtual ~Mesh ()
+	{
+		if (this->geometry)
+			delete this->geometry;
+	}
 };
 
 # endif // __SOFTENGINE_OBJECTS_MESH_H

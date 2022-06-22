@@ -1,8 +1,6 @@
 # ifndef __SOFTENGINE_CORE_GEOMETRY_H
 # define __SOFTENGINE_CORE_GEOMETRY_H
 
-# include <vector>
-
 # include "softengine/math.h"
 
 struct face
@@ -19,51 +17,34 @@ struct vertex
 class Geometry
 {
 public:
-	std::vector <vertex> vertices;
-	std::vector <face> faces;
+	vertex * vertices;
+	face * faces;
 
 	std::size_t num_vertices;
 	std::size_t num_faces;
 
-	Geometry ()
-		: vertices (0)
-		, faces (0)
-		, num_vertices (0)
-		, num_faces (0)
-	{}
-
-	void create (std::size_t num_vertices = 0, std::size_t num_faces = 0)
+	Geometry (std::size_t num_vertices, std::size_t num_faces)
 	{
 		this->num_vertices = num_vertices;
 		this->num_faces = num_faces;
 
-		this->vertices.reserve (num_vertices);
-		this->faces.reserve (num_faces);
-	}
-
-	void update_sizes ()
-	{
-		this->num_vertices = this->vertices.size ();
-		this->num_faces = this->faces.size ();
+		this->vertices = new vertex [num_vertices];
+		this->faces = new face [num_faces];
 	}
 
 	void transform (const matrix4 & transform)
 	{
-		// TODO: transform normals
 		for (int i = 0; i < this->num_vertices; i++)
-			this->vertices [i].position = vector3_transform (
-				this->vertices [i].position,
-				transform
-			);
+			this->vertices [i] = {
+				vector3_transform (this->vertices [i].position, transform),
+				vector3_transform_normal (this->vertices [i].normal, transform)
+			};
 	}
 
-	void destroy ()
+	virtual ~Geometry ()
 	{
-		this->num_vertices = 0;
-		this->num_faces = 0;
-
-		this->vertices.clear ();
-		this->faces.clear ();
+		delete [] this->vertices;
+		delete [] this->faces;
 	}
 };
 

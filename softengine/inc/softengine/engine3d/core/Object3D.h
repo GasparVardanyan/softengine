@@ -9,6 +9,9 @@
 
 class Object3D
 {
+	friend class Scene;
+protected:
+	matrix4 transform;
 public:
 	std::string name;
 

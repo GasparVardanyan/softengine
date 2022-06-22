@@ -31,11 +31,11 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 		int vc = mesh ["vertices"].size ();
 		int ic = mesh ["indices"].size ();
 
-		m->geometry.create (vc / verticesStep, ic / 3);
+		m->geometry = new Geometry (vc / verticesStep, ic / 3);
 
 		for (int i = 0, j = 0; i < vc; i += verticesStep, j++)
 		{
-			m->geometry.vertices.push_back ({
+			m->geometry->vertices [j] = {
 				.position = {
 					mesh ["vertices"] [i].asDouble (),
 					mesh ["vertices"] [i + 1].asDouble (),
@@ -46,20 +46,20 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 					mesh ["vertices"] [i + 4].asDouble (),
 					mesh ["vertices"] [i + 5].asDouble ()
 				}
-			});
+			};
 		}
 
 		for (int i = 0, j = 0; i < ic; i += 3, j++)
 		{
-			m->geometry.faces.push_back ({
+			m->geometry->faces [j] = {
 				mesh ["indices"] [i].asUInt64 (),
 				mesh ["indices"] [i + 1].asUInt64 (),
 				mesh ["indices"] [i + 2].asUInt64 ()
-			});
+			};
 		}
 
 		if (!matrix4_equals (transform, {0}))
-			m->geometry.transform (transform);
+			m->geometry->transform (transform);
 
 		m->position = {
 			mesh ["position"] [0].asDouble (),

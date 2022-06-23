@@ -9,7 +9,7 @@
 
 struct vertex_data
 {
-	vector3 position;
+	vector3 world_pos;
 	vector3 normal;
 	union {
 		vector3 projected;
@@ -82,7 +82,7 @@ void Camera3D :: render (const Scene & scene)
 	for (int i = 0; i < geometry->num_vertices; i++)
 	{
 		vertices_projected [i] = (vertex_data) {
-			.position = geometry->vertices [i].position,
+			.world_pos = geometry->vertices [i].position,
 			.normal = geometry->vertices [i].normal,
 			.projected = project (geometry->vertices [i].position)
 		};
@@ -92,11 +92,26 @@ void Camera3D :: render (const Scene & scene)
 	{
 		// unsigned char r, g, b;
 		// r = g = b = (0.25f + (i % geometry->num_faces) * 0.75f / geometry->num_faces) * 0xFF;
+		unsigned char color = (0.25f + (i % geometry->num_faces) * 0.75f / geometry->num_faces) * 0xFF;
+		// color=0xFF;
 
 		// Current face vertices projected
 		const vertex_data * v1 = vertices_projected + geometry->faces [i].v1;
 		const vertex_data * v2 = vertices_projected + geometry->faces [i].v2;
 		const vertex_data * v3 = vertices_projected + geometry->faces [i].v3;
+
+// # define DBG
+# ifdef DBG
+
+		const vertex_data __v [] = {
+			{.x = 40, .y = 200},
+			{.x = 210, .y = 270},
+			{.x = 100, .y = 100},
+		};
+
+		v1 = __v, v2 = __v + 1, v3 = __v + 2;
+
+# endif // DBG
 
 		// Point v1 on top, v2 on middle and v3 on bottom projected vertices
 		if (v2->y < v1->y)
@@ -106,11 +121,15 @@ void Camera3D :: render (const Scene & scene)
 		if (v3->y < v2->y)
 			std::swap (v2, v3);
 
-		scalar_t yd23 = v2->y - v3->y;
-		scalar_t yd31 = v3->y - v1->y;
-		scalar_t yd21 = v2->y - v1->y;
-
-// DRAW_SCAN_LINE
+		scalar_t yd32 = v2->y - v3->y;
+		scalar_t yd31 = v1->y - v3->y;
+		scalar_t yd21 = v1->y - v2->y;
+		scalar_t xd32 = v2->x - v3->x;
+		scalar_t xd31 = v1->x - v3->x;
+		scalar_t xd21 = v1->x - v2->x;
+		scalar_t zd32 = v2->z - v3->z;
+		scalar_t zd31 = v1->z - v3->z;
+		scalar_t zd21 = v1->z - v2->z;
 
 		int y;
 		const vertex_data * va, * vb, * vc, * vd;
@@ -139,7 +158,6 @@ void Camera3D :: render (const Scene & scene)
 		// v1, v2, v3 - top, mid, bot
 
 
-
 		std::size_t point_lights_count = scene.num_point_lights;
 
 		scalar_t ndotl1 = 1, ndotl2 = 1, ndotl3 = 1;
@@ -151,7 +169,7 @@ void Camera3D :: render (const Scene & scene)
 				vector3_normalized (
 					vector3_sub (
 						scene.point_lights [i]->transform.T,
-						v1 -> position
+						v1 -> world_pos
 					)
 				)
 			);
@@ -160,7 +178,7 @@ void Camera3D :: render (const Scene & scene)
 				vector3_normalized (
 					vector3_sub (
 						scene.point_lights [i]->transform.T,
-						v2 -> position
+						v2 -> world_pos
 					)
 				)
 			);
@@ -169,12 +187,149 @@ void Camera3D :: render (const Scene & scene)
 				vector3_normalized (
 					vector3_sub (
 						scene.point_lights [i]->transform.T,
-						v3 -> position
+						v3 -> world_pos
 					)
 				)
 			);
 		}
 
+		scalar_t cd32 = ndotl2 - ndotl3;
+		scalar_t cd31 = ndotl1 - ndotl3;
+		scalar_t cd21 = ndotl1 - ndotl2;
+
+		scalar_t xg32 = xd32 / yd32;
+		scalar_t xg21 = xd21 / yd21;
+		scalar_t xg31 = xd31 / yd31;
+		scalar_t zg32 = zd32 / yd32;
+		scalar_t zg21 = zd21 / yd21;
+		scalar_t zg31 = zd31 / yd31;
+		scalar_t cg32 = cd32 / yd32;
+		scalar_t cg31 = cd31 / yd31;
+		scalar_t cg21 = cd21 / yd21;
+
+# if 1
+
+# define interpolate(a,b,g) (a + (b - a) * g)
+
+
+		scalar_t s2 = xg32;
+		scalar_t sz2 = zg32;
+		scalar_t sc2 = cg32;
+
+		int t, b;
+		scalar_t l, r, ls, rs;
+		scalar_t lz, rz, lzs, rzs;
+		scalar_t lc, rc, lcs, rcs;
+
+		t = v1->y, b = v2->y;
+
+		l = v1->x;
+		r = v1->x;
+		ls = xg21;
+		rs = xg31;
+
+		lz = v1->z;
+		rz = v1->z;
+		lzs = zg21;
+		rzs = zg31;
+
+		lc = ndotl1;
+		rc = ndotl1;
+		lcs = cg21;
+		rcs = cg31;
+
+
+		bool swapped = false;
+
+		if (v2->x > v3->x)
+		{
+			std::swap (ls, rs);
+			std::swap (lzs, rzs);
+			std::swap (lcs, rcs);
+			swapped = true;
+		}
+
+		for (int y = t; y < b; y++)
+		{
+			scalar_t z = lz, zs = (rz - lz) / (r - l);
+			scalar_t c = lc, cs = (rc - lc) / (r - l);
+			for (int x = l; x <= r; x++)
+			{
+				color = clamp (c, 0, 1) * 0xFF;
+				if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
+					if (renderer->check_depth_buffer ({x, y, z}))
+						renderer->put_pixel ({x, y, z}, {color, color, color});
+				z += zs;
+				c += cs;
+			}
+			l+=ls;
+			r+=rs;
+			lz+=lzs;
+			rz+=rzs;
+			lc+=lcs;
+			rc+=rcs;
+		}
+
+		t = v2->y, b = v3->y;
+		if (!swapped)
+		{
+			l = v2->x;
+			r = interpolate (v1->x, v3->x, yd21 / yd31);
+			lz = v2->z;
+			rz = interpolate (v1->z, v3->z, yd21 / yd31);
+			lc = ndotl2;
+			rc = interpolate (ndotl1, ndotl3, yd21 / yd31);
+
+			ls = s2;
+			lzs = sz2;
+			lcs = sc2;
+		}
+		else
+		{
+			r = v2->x;
+			l = interpolate (v1->x, v3->x, yd21 / yd31);
+			rz = v2->z;
+			lz = interpolate (v1->z, v3->z, yd21 / yd31);
+			rc = ndotl2;
+			lc = interpolate (ndotl1, ndotl3, yd21 / yd31);
+
+			rs = s2;
+			rzs = sz2;
+			rcs = sc2;
+		}
+
+		for (int y = t; y < b; y++)
+		{
+			scalar_t z = lz, zs = (rz - lz) / (r - l);
+			scalar_t c = lc, cs = (rc - lc) / (r - l);
+			for (int x = l; x <= r; x++)
+			{
+				color = clamp (c, 0, 1) * 0xFF;
+				if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
+					if (renderer->check_depth_buffer ({x, y, z}))
+						renderer->put_pixel ({x, y, z}, {color, color, color});
+				z += zs;
+				c += cs;
+			}
+			l+=ls;
+			r+=rs;
+			lz+=lzs;
+			rz+=rzs;
+			lc+=lcs;
+			rc+=rcs;
+		}
+
+# undef interpolate
+
+
+// drwscnln:
+
+# else
+
+{
+scalar_t yd23 = v2->y - v3->y;
+scalar_t yd31 = v3->y - v1->y;
+scalar_t yd21 = v2->y - v1->y;
 		scalar_t ndotla, ndotlb, ndotlc, ndotld;
 
 		va = v1, vb = v3, vc = v1, vd = v2, yds = yd31, yde = yd21;
@@ -266,6 +421,14 @@ draw_scan_line:
 			ndotlc = ndotl3;
 			goto draw_scan_line;
 		}
+}
+# endif
+# ifdef DBG
+		draw_line (v1->x, v1->y, v2->x, v2->y, {0xff, 0, 0});
+		draw_line (v2->x, v2->y, v3->x, v3->y, {0xff, 0, 0});
+		draw_line (v3->x, v3->y, v1->x, v1->y, {0xff, 0, 0});
+	break;
+# endif
 	}
 
 	for (int i = 0; i < geometry->num_faces; i++)

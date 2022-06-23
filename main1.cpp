@@ -41,6 +41,7 @@ int main ()
 
 	Object3D * monkey = ParserBABYLON::parse (monbin, MATRIX4_SCALE (1, 1, 1));
 	monkey->position.z = 15;
+	// monkey->rotation.z = PI;
 	rootContainer.addChild (monkey);
 
 	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
@@ -74,6 +75,8 @@ int main ()
 
 		monkey->rotation.y += .01;
 		monkey->rotation.z += .01;
+
+		// std::cout << monkey->rotation.y << " - " << monkey->rotation.z << std::endl;
 
 		fps++;
 

@@ -17,8 +17,8 @@
 const int view_width = 640;
 const int view_height = 460;
 
-# define BOX
-// # define MONKEY
+// # define BOX
+# define MONKEY
 
 /*
  * TODO: camera transformation works wrong... implement mat4 lookAt
@@ -37,6 +37,10 @@ int main ()
 
 	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
 	Camera3D camera1 (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene1, background)));
+
+	PointLight * light = new PointLight;
+	light->position = {0, 10, -3};
+	rootContainer.addChild (light);
 
 # ifdef BOX
 	// Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
@@ -65,12 +69,16 @@ int main ()
 	camera1.position.z = -3;
 	camera1.rotation.x = 25 * PI / 180;
 
+	bool pause = false;
 
-		scene3d.update ();
-		camera.render (scene3d);
 	while (true)
 	{
-		// std::cout << scene3d.geometry->num_vertices << std::endl;
+		if (!pause)
+		{
+			scene3d.update ();
+			camera.render (scene3d);
+		}
+
 		cv::imshow ("softengine", scene);
 
 		// camera1.render (scene3d);
@@ -79,16 +87,21 @@ int main ()
 		char key = cv::waitKey (1);
 		if (key == 'q')
 			break;
+		else if (key == 'p')
+			pause = !pause;
 
+		if (!pause)
+		{
 # ifdef BOX
-		box->rotation.x += .01;
-		box->rotation.y += .01;
-		// std::cout << box->rotation.x << " - " << box->rotation.y << std::endl;
+			box->rotation.x += .01;
+			box->rotation.y += .01;
+			// std::cout << box->rotation.x << " - " << box->rotation.y << std::endl;
 # endif // BOX
 
 # ifdef MONKEY
-		monkey->rotation.y += .01;
+			monkey->rotation.y += .01;
 # endif // MONKEY
+		}
 	}
 
 	cv::destroyAllWindows ();

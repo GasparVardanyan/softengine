@@ -1,6 +1,8 @@
 # ifndef __SOFTENGINE_CORE_GEOMETRY_H
 # define __SOFTENGINE_CORE_GEOMETRY_H
 
+# include <cstddef>
+
 # include "softengine/math.h"
 
 struct face

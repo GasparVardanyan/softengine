@@ -59,22 +59,32 @@ int main ()
 
 	std::chrono::steady_clock::time_point beg = std::chrono::steady_clock::now ();
 
+	bool pause = false;
+
 	while (true)
 	{
-		scene3d.update ();
-		camera.render (scene3d);
+		if (!pause)
+		{
+			scene3d.update ();
+			camera.render (scene3d);
+		}
 
 		cv::imshow ("softengine", scene);
 
 		char key = cv::waitKey (1);
 		if (key == 'q')
 			break;
+		else if (key == ' ')
+			pause = !pause;
 
-		// box->rotation.x += .01;
-		// box->rotation.y += .01;
+		if (!pause)
+		{
+			// box->rotation.x += .01;
+			// box->rotation.y += .01;
 
-		monkey->rotation.y += .01;
-		monkey->rotation.z += .01;
+			monkey->rotation.y += .01;
+			monkey->rotation.z += .01;
+		}
 
 		// std::cout << monkey->rotation.y << " - " << monkey->rotation.z << std::endl;
 

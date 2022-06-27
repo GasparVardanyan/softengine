@@ -7,8 +7,8 @@ const struct vector3 VECTOR3_Y = { .y = 1 };
 const struct vector3 VECTOR3_Z = { .z = 1 };
 const struct vector3 VECTOR3_ZERO = { 0 };
 
-const struct vector3 VECTOR3_UP = { .z = 1 };
-const struct vector3 VECTOR3_DOWN = { .z = -1 };
+const struct vector3 VECTOR3_UP = { .y = 1 };
+const struct vector3 VECTOR3_DOWN = { .y = -1 };
 const struct vector3 VECTOR3_LEFT = { .x = -1 };
 const struct vector3 VECTOR3_RIGHT = { .x = 1 };
 const struct vector3 VECTOR3_FORWARD = { .z = 1 };

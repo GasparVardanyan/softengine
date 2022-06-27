@@ -17,8 +17,8 @@
 const int view_width = 640;
 const int view_height = 460;
 
-// # define BOX
-# define MONKEY
+# define BOX
+// # define MONKEY
 
 /*
  * TODO: camera transformation works wrong... implement mat4 lookAt
@@ -71,12 +71,12 @@ int main ()
 
 	bool pause = false;
 
+			scene3d.update ();
+			camera.render (scene3d);
 	while (true)
 	{
 		if (!pause)
 		{
-			scene3d.update ();
-			camera.render (scene3d);
 		}
 
 		cv::imshow ("softengine", scene);
@@ -87,7 +87,7 @@ int main ()
 		char key = cv::waitKey (1);
 		if (key == 'q')
 			break;
-		else if (key == 'p')
+		else if (key == ' ')
 			pause = !pause;
 
 		if (!pause)

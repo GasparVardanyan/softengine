@@ -94,10 +94,10 @@ struct matrix4 { union
 	};
 	struct
 	{
-		vector3 X; scalar_t _x;
-		vector3 Y; scalar_t _y;
-		vector3 Z; scalar_t _z;
-		vector3 T; scalar_t _t;
+		struct vector3 X; scalar_t _x;
+		struct vector3 Y; scalar_t _y;
+		struct vector3 Z; scalar_t _z;
+		struct vector3 T; scalar_t _t;
 	};
 }; };
 

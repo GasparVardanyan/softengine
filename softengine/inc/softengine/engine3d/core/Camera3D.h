@@ -9,6 +9,66 @@
 # include "softengine/engine3d/renderer/IRenderer.h"
 # include "softengine/math.h"
 
+class CullingFrustum
+{
+private:
+	union {
+		struct {
+			vector3 _near_n;
+			vector3 _far_n;
+			vector3 _left_n;
+			vector3 _right_n;
+			vector3 _top_n;
+			vector3 _bottom_n;
+		};
+		vector3 _normals [6];
+	};
+
+public:
+	union {
+		struct {
+			vector3 near_n;
+			vector3 far_n;
+			vector3 left_n;
+			vector3 right_n;
+			vector3 top_n;
+			vector3 bottom_n;
+		};
+		vector3 normals [6];
+	};
+
+	CullingFrustum ()
+	{
+	}
+
+	// void generate (scalar_t fov, scalar_t znear, scalar_t zfar)
+	// {
+	//     scalar_t f = fov / 2;
+    //
+	//     _near_n = VECTOR3_FORWARD;
+	//     _far_n = VECTOR3_BACK;
+	//     _left_n = vector3_transform_normal (VECTOR3_RIGHT, MATRIX4_ROTATIONY (f));
+	//     _right_n = vector3_transform_normal (VECTOR3_LEFT, MATRIX4_ROTATIONY (-f));
+	//     _top_n = vector3_transform_normal (VECTOR3_DOWN, MATRIX4_ROTATIONX (f));
+	//     _bottom_n = vector3_transform_normal (VECTOR3_UP, MATRIX4_ROTATIONX (-f));
+    //
+	//     // TODO: where f and where -f ?
+	//     // TODO: this might change fixing camera's transfom !!
+	// }
+    //
+	// void setTransform (const matrix4 & transform)
+	// {
+	//     for (int i = 0; i < 6; i++)
+	//         normals [i] = vector3_transform_normal (_normals [i], transform);
+	// }
+    //
+	// bool inside (vector3 v)
+	// {
+	//     for (int i = 0; i < 6; i++)
+	//         if (vector3_dot (normals [i], v)
+	// }
+};
+
 class Camera3D : public Object3D
 {
 protected:

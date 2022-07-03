@@ -73,19 +73,41 @@ struct matrix4 MATRIX4_SCALE (scalar_t x, scalar_t y, scalar_t z)
 
 struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl)
 {
-	return matrix4_mul (
-		matrix4_mul (
-			MATRIX4_SCALE (scl.x, scl.y, scl.z),
-			matrix4_mul (
-				MATRIX4_ROTATIONZ (rot.z),
-				matrix4_mul (
-					MATRIX4_ROTATIONX (rot.x),
-					MATRIX4_ROTATIONY (rot.y)
-				)
-			)
-		),
-		MATRIX4_TRANSLATION (pos.x, pos.y, pos.z)
-	);
+	/* return matrix4_mul ( */
+	/*     matrix4_mul ( */
+	/*         MATRIX4_SCALE (scl.x, scl.y, scl.z), */
+	/*         matrix4_mul ( */
+	/*             MATRIX4_ROTATIONZ (rot.z), */
+	/*             matrix4_mul ( */
+	/*                 MATRIX4_ROTATIONY (rot.y), */
+	/*                 MATRIX4_ROTATIONX (rot.x) */
+	/*             ) */
+	/*         ) */
+	/*     ), */
+	/*     MATRIX4_TRANSLATION (pos.x, pos.y, pos.z) */
+	/* ); */
+
+	scalar_t sx = sin (rot.x), sy = sin (rot.y), sz = sin (rot.z);
+	scalar_t cx = cos (rot.x), cy = cos (rot.y), cz = cos (rot.z);
+
+	// TODO: do more optimisations
+	//     https://github.com/AlternativaPlatform/Alternativa3D/blob/master/src/alternativa/engine3d/core/Transform3D.as#L49
+
+	return (struct matrix4) {
+		scl.x * ((cz) * (cy)),
+		scl.y * ((cz) * ((-sy) * (-sx)) + (sz) * (cx)),
+		scl.z * ((cz) * ((-sy) * (cx)) + (sz) * (sx)),
+		0,
+		scl.x * ((-sz) * (cy)),
+		scl.y * ((-sz) * ((-sy) * (-sx)) + (cz) * (cx)),
+		scl.z * ((-sz) * ((-sy) * (cx)) + (cz) * (sx)),
+		0,
+		scl.x * (sy),
+		scl.y * ((cy) * (-sx)),
+		scl.z * ((cy) * (cx)),
+		0,
+		pos.x, pos.y, pos.z, 1,
+	};
 }
 
 struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)
@@ -119,7 +141,7 @@ struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2)
 		m1.m30 * m2.m00 + m1.m31 * m2.m10 + m1.m32 * m2.m20 + m1.m33 * m2.m30,
 		m1.m30 * m2.m01 + m1.m31 * m2.m11 + m1.m32 * m2.m21 + m1.m33 * m2.m31,
 		m1.m30 * m2.m02 + m1.m31 * m2.m12 + m1.m32 * m2.m22 + m1.m33 * m2.m32,
-		m1.m30 * m2.m03 + m1.m31 * m2.m13 + m1.m32 * m2.m23 + m1.m33 * m2.m33
+		m1.m30 * m2.m03 + m1.m31 * m2.m13 + m1.m32 * m2.m23 + m1.m33 * m2.m33,
 	};
 }
 

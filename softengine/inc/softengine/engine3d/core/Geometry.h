@@ -1,5 +1,5 @@
-# ifndef __SOFTENGINE_CORE_GEOMETRY_H
-# define __SOFTENGINE_CORE_GEOMETRY_H
+# ifndef __SOFTENGINE3D_CORE_GEOMETRY_H
+# define __SOFTENGINE3D_CORE_GEOMETRY_H
 
 # include <cstddef>
 
@@ -8,13 +8,22 @@
 struct face
 {
 	std::size_t v1, v2, v3;
+	int textureindex;
+};
+
+struct uv
+{
+	scalar_t u, v;
 };
 
 struct vertex
 {
 	vector3 position;
 	vector3 normal;
+	uv texture_coordinates;
 };
+
+// TODO: implement surfaces
 
 class Geometry
 {
@@ -50,4 +59,4 @@ public:
 	}
 };
 
-# endif // __SOFTENGINE_CORE_GEOMETRY_H
+# endif // __SOFTENGINE3D_CORE_GEOMETRY_H

@@ -1,5 +1,5 @@
-# ifndef __SOFTENGINE_PARSER_BABYLON_H
-# define __SOFTENGINE_PARSER_BABYLON_H
+# ifndef __SOFTENGINE3D_PARSER_BABYLON_H
+# define __SOFTENGINE3D_PARSER_BABYLON_H
 
 # include <json/json.h>
 
@@ -11,4 +11,4 @@ public:
 	static Object3D * parse (const Json::Value & data, matrix4 transform = {0});
 };
 
-# endif // __SOFTENGINE_PARSER_BABYLON_H
+# endif // __SOFTENGINE3D_PARSER_BABYLON_H

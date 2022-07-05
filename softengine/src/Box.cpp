@@ -4,6 +4,9 @@
 
 Box::Box (scalar_t width, scalar_t height, scalar_t length, matrix4 transform)
 {
+
+	// TODO: set uv coordinates
+
 	scalar_t _w = width / 2;
 	scalar_t _h = height / 2;
 	scalar_t _l = length / 2;

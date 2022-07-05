@@ -1,8 +1,9 @@
-# ifndef __SOFTENGINE_CORE_CAMERA3D_H
-# define __SOFTENGINE_CORE_CAMERA3D_H
+# ifndef __SOFTENGINE3D_CORE_CAMERA3D_H
+# define __SOFTENGINE3D_CORE_CAMERA3D_H
 
 # include <memory>
 
+# include "softengine/engine3d/core/Image.h"
 # include "softengine/engine3d/core/Geometry.h"
 # include "softengine/engine3d/core/Object3D.h"
 # include "softengine/engine3d/core/Scene.h"
@@ -84,21 +85,25 @@ protected:
 	vector3 project (vector3 v);
 
 	scalar_t * depth_buffer;
-	point * bmp;
 	std::size_t * faces_to_raster;
 
 public:
-	Camera3D (matrix4 projector, std::shared_ptr <IRenderer> renderer)
+	Image frame;
+	color4 background;
+
+	Camera3D (matrix4 projector, std::shared_ptr <IRenderer> renderer, color4 background)
 		: projector (projector)
 		, renderer (renderer)
+		, background (background)
 	{
 		renderer_cw = renderer->canvas_width;
 		renderer_ch = renderer->canvas_height;
 		renderer_cs = renderer_cw * renderer_ch;
 
+		frame.create (renderer_cw, renderer_ch, background);
+
 		depth_buffer = new scalar_t [renderer_cs];
 		faces_to_raster = new std::size_t [renderer_cs];
-		bmp = new point [renderer_cs];
 	}
 
 	void render (const Scene & scene);
@@ -106,9 +111,8 @@ public:
 	virtual ~Camera3D ()
 	{
 		delete [] depth_buffer;
-		delete [] bmp;
 		delete [] faces_to_raster;
 	}
 };
 
-# endif // __SOFTENGINE_CORE_CAMERA3D_H
+# endif // __SOFTENGINE3D_CORE_CAMERA3D_H

@@ -1,8 +1,3 @@
-# include <cstdio>
-# include <iostream>
-
-
-
 # include <algorithm>
 # include <utility>
 
@@ -66,12 +61,18 @@ vector3 Camera3D :: project (vector3 v)
 
 void Camera3D :: render (const Scene & scene)
 {
+	// frame.fill (background);
+	for (int i = 0; i < renderer_cs; i++)
+		depth_buffer [i] = std::numeric_limits <scalar_t> :: infinity ();
+
+
+
 	renderer->clear_canvas ();
 	// std::fill (depth_buffer.begin (), depth_buffer.end (), std::numeric_limits <scalar_t> :: infinity ());
 	// std::fill (bmp, { 0xff, 0x80, 0x00 });
-	for (int i = 0; i < renderer_cs; i++);
 
 	const Geometry * geometry = scene.geometry;
+	const Material ** materials = scene.materials;
 
 	vertex_data * vertices_projected = new vertex_data [geometry->num_vertices];
 
@@ -95,6 +96,12 @@ void Camera3D :: render (const Scene & scene)
 
 	for (int i = 0; i < geometry->num_faces; i++)
 	{
+		// TODO: backface culling there...
+
+		const Material * & m = materials [geometry->faces [i].textureindex];
+
+
+
 		// unsigned char r, g, b;
 		// r = g = b = (0.25f + (i % geometry->num_faces) * 0.75f / geometry->num_faces) * 0xFF;
 		unsigned char color = (0.25f + (i % geometry->num_faces) * 0.75f / geometry->num_faces) * 0xFF;
@@ -472,6 +479,8 @@ void Camera3D :: render (const Scene & scene)
 draw_scan_line:
 		for (y = ys; y <= ye; y++)
 		{
+			int pxi = y * renderer_cw;
+
 			scalar_t sg = yds ? (y - va->y) / yds : 1;
 			scalar_t eg = yde ? (y - vc->y) / yde : 1;
 
@@ -534,15 +543,22 @@ draw_scan_line:
 			// if (v.x > 0 && v.y > 0 && v.x < renderer_cw && v.y < renderer_ch)
 			//     renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0, 0});
 
+			pxi += sx;
+
 			for (x = sx; x <= ex; x++)
 			{
 				z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
 				scalar_t ndotl = interpolate (ndotls, ndotle, (scalar_t) (x - sx) / (ex - sx));
 				color = clamp (ndotl, 0, 1) * 0xFF;
-				if (renderer->check_depth_buffer ({x, y, z}))
+				// if (renderer->check_depth_buffer ({x, y, z}))
+				if (z < depth_buffer [pxi])
 				{
+					// frame.put_pixel ({x, y, z}, {color, color, color});
 					renderer->put_pixel ({x, y, z}, {color, color, color});
+					depth_buffer [pxi] = z;
 				}
+
+				pxi++;
 			}
 		}
 
@@ -562,6 +578,13 @@ draw_scan_line:
 	break;
 # endif
 	}
+
+	// for (int y = 0; y < renderer_ch; y++)
+	//     for (int x = 0; x < renderer_cw; x++)
+	//     {
+	//         auto c = frame.buffer.at <cv::Vec3b> (cv::Point (x, y));
+	//         renderer->put_pixel ({x, y}, {c [2], c [1], c [0]});
+	//     }
 
 	for (int i = 0; i < geometry->num_faces; i++)
 	{

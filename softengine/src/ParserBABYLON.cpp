@@ -11,11 +11,13 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 
 	for (auto mesh : data ["meshes"])
 	{
-		auto m = new Mesh;
+		Mesh * m = new Mesh;
 		int verticesStep = 1;
 		m->name = mesh ["name"].asString ();
 
-		switch (mesh ["uvCount"].asUInt64 ())
+		unsigned long long uvcount = mesh ["uvCount"].asUInt64 ();
+
+		switch (uvcount)
 		{
 		case 0:
 			verticesStep = 6;
@@ -37,24 +39,31 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 		{
 			m->geometry->vertices [j] = {
 				.position = {
-					mesh ["vertices"] [i].asDouble (),
-					mesh ["vertices"] [i + 1].asDouble (),
-					mesh ["vertices"] [i + 2].asDouble ()
+					.x = mesh ["vertices"] [i].asDouble (),
+					.y = mesh ["vertices"] [i + 1].asDouble (),
+					.z = mesh ["vertices"] [i + 2].asDouble ()
 				},
 				.normal = {
-					mesh ["vertices"] [i + 3].asDouble (),
-					mesh ["vertices"] [i + 4].asDouble (),
-					mesh ["vertices"] [i + 5].asDouble ()
+					.x = mesh ["vertices"] [i + 3].asDouble (),
+					.y = mesh ["vertices"] [i + 4].asDouble (),
+					.z = mesh ["vertices"] [i + 5].asDouble ()
 				}
 			};
+
+			if (uvcount != 0)
+				m->geometry->vertices [j].texture_coordinates = {
+					.u = mesh ["vertices"] [i + 6].asDouble (),
+					.v = mesh ["vertices"] [i + 7].asDouble ()
+				};
 		}
 
 		for (int i = 0, j = 0; i < ic; i += 3, j++)
 		{
 			m->geometry->faces [j] = {
-				mesh ["indices"] [i].asUInt64 (),
-				mesh ["indices"] [i + 1].asUInt64 (),
-				mesh ["indices"] [i + 2].asUInt64 ()
+				.v1 = mesh ["indices"] [i].asUInt64 (),
+				.v2 = mesh ["indices"] [i + 1].asUInt64 (),
+				.v3 = mesh ["indices"] [i + 2].asUInt64 (),
+				.textureindex = 0, // TODO: read this from .babylon data
 			};
 		}
 
@@ -62,10 +71,12 @@ Object3D * ParserBABYLON::parse (const Json::Value & data, matrix4 transform)
 			m->geometry->transform (transform);
 
 		m->position = {
-			mesh ["position"] [0].asDouble (),
-			mesh ["position"] [1].asDouble (),
-			mesh ["position"] [2].asDouble ()
+			.x = mesh ["position"] [0].asDouble (),
+			.y = mesh ["position"] [1].asDouble (),
+			.z = mesh ["position"] [2].asDouble ()
 		};
+
+
 
 		container->addChild (m);
 	}

@@ -1,5 +1,5 @@
-# ifndef __SOFTENGINE_CORE_OBJECT3D_H
-# define __SOFTENGINE_CORE_OBJECT3D_H
+# ifndef __SOFTENGINE3D_CORE_OBJECT3D_H
+# define __SOFTENGINE3D_CORE_OBJECT3D_H
 
 # include <memory>
 # include <string>
@@ -36,4 +36,4 @@ public:
 	virtual ~Object3D () {}
 };
 
-# endif // __SOFTENGINE_CORE_OBJECT3D_H
+# endif // __SOFTENGINE3D_CORE_OBJECT3D_H

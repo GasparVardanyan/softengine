@@ -21,11 +21,15 @@ scalar_t interpolate (scalar_t min, scalar_t max, scalar_t gradient);
 
 
 
-struct color4
+struct color4 { union
 {
-	unsigned char r, g, b;
-	scalar_t a;
-};
+	struct
+	{
+		unsigned char b, g, r;
+	};
+
+	unsigned long hex;
+}; };
 
 struct point
 {

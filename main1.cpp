@@ -9,6 +9,7 @@
 # include "softengine/engine3d/core/Object3D.h"
 # include "softengine/engine3d/core/Scene.h"
 # include "softengine/engine3d/lights/PointLight.h"
+# include "softengine/engine3d/materials/FillMaterial.h"
 # include "softengine/engine3d/materials/TextureMaterial.h"
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/engine3d/parser/ParserBABYLON.h"
@@ -51,16 +52,18 @@ int main ()
 
 	rootContainer.addChild (monkey);
 
-	// Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
-	// box->position.y = 3;
-	// // box->rotation.z = 45 * PI / 180;
-    //
-	// // box->rotation.x = -15 * PI / 180;
-	// // rootContainer.addChild (box);
-	// monkey->addChild (box);
-	// box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (-45 * PI / 180));
-	// box->position.y = 3;
-	// monkey->addChild (box);
+	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
+	box->setMaterial (new FillMaterial ((color4) {.hex = 0xff0000}));
+	box->position.y = 3;
+	// box->rotation.z = 45 * PI / 180;
+
+	// box->rotation.x = -15 * PI / 180;
+	// rootContainer.addChild (box);
+	monkey->addChild (box);
+	box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (-45 * PI / 180));
+	box->setMaterial (new FillMaterial ((color4) {.hex = 0xff0000}));
+	box->position.y = 3;
+	monkey->addChild (box);
 
 	int fps = 0; // loop's fps, not the camera's :d
 
@@ -68,13 +71,13 @@ int main ()
 
 	bool pause = false;
 
+	while (true)
+	{
 		if (!pause)
 		{
 			scene3d.update ();
 			camera.render (scene3d);
 		}
-	while (true)
-	{
 
 		cv::imshow ("softengine", scene);
 		// cv::imshow ("m", material->raw.buffer);
@@ -103,7 +106,7 @@ int main ()
 		if (std::chrono::duration_cast <std::chrono::nanoseconds> (end - beg).count () >= 1e9l)
 		{
 			beg = end;
-			// std::cout << fps << std::endl;
+			std::cout << fps << std::endl;
 			fps = 0;
 		}
 	}

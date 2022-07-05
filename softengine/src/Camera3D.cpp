@@ -17,6 +17,12 @@ struct vertex_data
 	};
 	vector3 world_pos;
 	vector3 normal;
+	union {
+		uv texture_coordinates;
+		struct {
+			scalar_t u, v;
+		};
+	};
 };
 
 void Camera3D :: put_pixel (point p, color4 c)
@@ -90,7 +96,8 @@ void Camera3D :: render (const Scene & scene)
 		vertices_projected [i] = (vertex_data) {
 			.projected = project (geometry->vertices [i].position),
 			.world_pos = geometry->vertices [i].position,
-			.normal = geometry->vertices [i].normal
+			.normal = geometry->vertices [i].normal,
+			.texture_coordinates = geometry->vertices [i].texture_coordinates
 		};
 	}
 
@@ -492,11 +499,19 @@ draw_scan_line:
 			scalar_t ndotls = interpolate (ndotla, ndotlb, sg);
 			scalar_t ndotle = interpolate (ndotlc, ndotld, eg);
 
+			scalar_t us = interpolate (va->u, vb->u, sg);
+			scalar_t ue = interpolate (vc->u, vd->u, eg);
+
+			scalar_t vs = interpolate (va->v, vb->v, sg);
+			scalar_t ve = interpolate (vc->v, vd->v, eg);
+
 			if (sx > ex)
 			{
 				std::swap (sx, ex);
 				std::swap (sz, ez);
 				std::swap (ndotls, ndotle);
+				std::swap (us, ue);
+				std::swap (vs, ve);
 			} // TODO: move outside the loop
 
 			if (sx < 0) sx = 0;
@@ -549,12 +564,19 @@ draw_scan_line:
 			{
 				z = interpolate (sz, ez, (scalar_t) (x - sx) / (ex - sx));
 				scalar_t ndotl = interpolate (ndotls, ndotle, (scalar_t) (x - sx) / (ex - sx));
-				color = clamp (ndotl, 0, 1) * 0xFF;
+				scalar_t u = interpolate (us, ue, (scalar_t) (x - sx) / (ex - sx));
+				scalar_t v = interpolate (vs, ve, (scalar_t) (x - sx) / (ex - sx));
+				scalar_t i = clamp (ndotl, 0, 1);
+				if (u < 0) u = 0; if (u > 1) u = 1;
+				if (v < 0) v = 0; if (v > 1) v = 1;
+				color4 c = m->map (u, v);
+				c.b *= i, c.g *= i, c.r *= i;
+				color = i * 0xFF;
 				// if (renderer->check_depth_buffer ({x, y, z}))
 				if (z < depth_buffer [pxi])
 				{
 					// frame.put_pixel ({x, y, z}, {color, color, color});
-					renderer->put_pixel ({x, y, z}, {color, color, color});
+					renderer->put_pixel ({x, y, z}, c);
 					depth_buffer [pxi] = z;
 				}
 

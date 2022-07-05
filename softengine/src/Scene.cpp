@@ -33,6 +33,8 @@ void Scene :: update (Object3D * container, matrix4 transform)
 				.normal = vector3_transform_normal (g->vertices [i].normal, transform),
 				.texture_coordinates = g->vertices [i].texture_coordinates
 			};
+
+			// std::cout << g->vertices [i].texture_coordinates.u << " - " << g->vertices [i].texture_coordinates.v << std::endl;
 		}
 
 		for (std::size_t i = 0; i < g->num_faces; i++)

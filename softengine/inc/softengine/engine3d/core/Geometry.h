@@ -46,10 +46,10 @@ public:
 	void transform (const matrix4 & transform)
 	{
 		for (int i = 0; i < this->num_vertices; i++)
-			this->vertices [i] = {
-				vector3_transform (this->vertices [i].position, transform),
-				vector3_transform_normal (this->vertices [i].normal, transform)
-			};
+		{
+			this->vertices [i].position = vector3_transform (this->vertices [i].position, transform);
+			this->vertices [i].normal = vector3_transform_normal (this->vertices [i].normal, transform);
+		}
 	}
 
 	virtual ~Geometry ()

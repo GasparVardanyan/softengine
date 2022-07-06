@@ -84,6 +84,8 @@ protected:
 	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c);
 	vector3 project (vector3 v);
 
+	matrix4 view_transform;
+
 	scalar_t * depth_buffer;
 	std::size_t * faces_to_raster;
 
@@ -93,6 +95,7 @@ public:
 
 	Camera3D (matrix4 projector, std::shared_ptr <IRenderer> renderer, color4 background)
 		: projector (projector)
+		, view_transform ({0})
 		, renderer (renderer)
 		, background (background)
 	{

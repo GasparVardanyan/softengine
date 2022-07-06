@@ -51,13 +51,7 @@ void Camera3D :: draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, 
 
 vector3 Camera3D :: project (vector3 v)
 {
-	matrix4 transform = MATRIX4_TRANSFORM (
-		vector3_negative (position),
-		vector3_negative (rotation),
-		(vector3) {1, 1, 1}
-	); // TODO: URGENT!! fix camera transform
-
-	v = vector3_transform (v, matrix4_mul (transform, projector));
+	v = vector3_transform (v, matrix4_mul (view_transform, projector));
 
 	v.x = (v.x + .5) * renderer_cw;
 	v.y = (-v.y + .5) * renderer_ch;
@@ -67,11 +61,20 @@ vector3 Camera3D :: project (vector3 v)
 
 void Camera3D :: render (const Scene & scene)
 {
+	// inverse the rotation (transpose the rotation matrix), negate the position
+
+	this->view_transform = {
+		 transform.xx,  transform.yx,  transform.zx,  transform.xw,
+		 transform.xy,  transform.yy,  transform.zy,  transform.yw,
+		 transform.xz,  transform.yz,  transform.zz,  transform.zw,
+		-transform.tx, -transform.ty, -transform.tz,  transform.tw
+	};
+
+
+
 	// frame.fill (background);
 	for (int i = 0; i < renderer_cs; i++)
 		depth_buffer [i] = std::numeric_limits <scalar_t> :: infinity ();
-
-
 
 	renderer->clear_canvas ();
 	// std::fill (depth_buffer.begin (), depth_buffer.end (), std::numeric_limits <scalar_t> :: infinity ());

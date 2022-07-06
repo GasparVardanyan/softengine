@@ -71,7 +71,7 @@ struct matrix4 MATRIX4_SCALE (scalar_t x, scalar_t y, scalar_t z)
 	};
 }
 
-struct matrix4 MATRIX4_TRANSFORM (vector3 pos, vector3 rot, vector3 scl)
+struct matrix4 MATRIX4_TRANSFORM (struct vector3 pos, struct vector3 rot, struct vector3 scl)
 {
 	/* return matrix4_mul ( */
 	/*     matrix4_mul ( */

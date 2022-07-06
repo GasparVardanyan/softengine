@@ -30,7 +30,8 @@ int main ()
 	Object3D rootContainer;
 	Scene scene3d (& rootContainer);
 
-	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
+	Camera3D * camera = new Camera3D (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
+	rootContainer.addChild (camera);
 
 
 	PointLight * light = new PointLight;
@@ -52,6 +53,8 @@ int main ()
 
 	rootContainer.addChild (monkey);
 
+	Object3D * box_container = new Object3D;
+
 	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
 	box->setMaterial (new FillMaterial ((color4) {.hex = 0xff0000}));
 	box->position.y = 3;
@@ -59,11 +62,13 @@ int main ()
 
 	// box->rotation.x = -15 * PI / 180;
 	// rootContainer.addChild (box);
-	monkey->addChild (box);
+	box_container->addChild (box);
 	box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (-45 * PI / 180));
 	box->setMaterial (new FillMaterial ((color4) {.hex = 0xff0000}));
 	box->position.y = 3;
-	monkey->addChild (box);
+	box_container->addChild (box);
+
+	monkey->addChild (box_container);
 
 	int fps = 0; // loop's fps, not the camera's :d
 
@@ -76,7 +81,7 @@ int main ()
 		if (!pause)
 		{
 			scene3d.update ();
-			camera.render (scene3d);
+			camera->render (scene3d);
 		}
 
 		cv::imshow ("softengine", scene);
@@ -95,6 +100,8 @@ int main ()
 
 			monkey->rotation.y += .01;
 			monkey->rotation.z += .01;
+
+			box_container->rotation.y += .03;
 		}
 
 		// std::cout << monkey->rotation.y << " - " << monkey->rotation.z << std::endl;

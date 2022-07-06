@@ -11,8 +11,11 @@ const struct vector3 VECTOR3_UP = { .y = 1 };
 const struct vector3 VECTOR3_DOWN = { .y = -1 };
 const struct vector3 VECTOR3_LEFT = { .x = -1 };
 const struct vector3 VECTOR3_RIGHT = { .x = 1 };
+const struct vector3 VECTOR3_FRONT = { .z = -1 };
+const struct vector3 VECTOR3_BACK = { .z = 1 };
+
 const struct vector3 VECTOR3_FORWARD = { .z = 1 };
-const struct vector3 VECTOR3_BACK = { .z = -1 };
+const struct vector3 VECTOR3_BACKWARD = { .z = -1 };
 
 struct vector3 vector3_transform (struct vector3 v, struct matrix4 m)
 {
@@ -107,7 +110,11 @@ scalar_t vector3_distsqr (struct vector3 v1, struct vector3 v2)
 
 scalar_t vector3_dist (struct vector3 v1, struct vector3 v2)
 {
-	return sqrtl (vector3_distsqr (v1, v2));
+	scalar_t xdist = v1.x - v2.x;
+	scalar_t ydist = v1.y - v2.y;
+	scalar_t zdist = v1.z - v2.z;
+
+	return sqrtl (xdist * xdist + ydist * ydist + zdist * zdist);
 }
 
 struct vector3 vector3_add (struct vector3 v1, struct vector3 v2)

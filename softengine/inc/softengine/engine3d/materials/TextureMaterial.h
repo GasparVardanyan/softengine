@@ -27,8 +27,6 @@ public:
 		v -= y1;
 
 		color4 tl = raw.get_pixel (x1, y1);
-		color4 tr = raw.get_pixel (x2, y1);
-		color4 bl = raw.get_pixel (x1, y2);
 		color4 br = raw.get_pixel (x2, y2);
 
 		// TODO: do linear filtering there...

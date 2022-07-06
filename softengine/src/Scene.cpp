@@ -1,3 +1,4 @@
+# include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/core/Scene.h"
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/math.h"

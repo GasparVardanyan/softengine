@@ -2,7 +2,7 @@
 
 rm -f *.o a.out
 
-gcc -std=c18 -pedantic-errors -Werror=pedantic -I./softengine/inc ./softengine/src/*.c -c -Ofast						&& \
+gcc -include stdio.h -std=c18 -pedantic-errors -Werror=pedantic -I./softengine/inc ./softengine/src/*.c -c -Ofast						&& \
 g++ -include iostream -D_Bool=bool -I./softengine/inc -ljsoncpp $(pkgconf -cflags -libs opencv4) ./softengine/src/*.cpp -c -Ofast			&& \
 g++ -include iostream -D_Bool=bool -ljsoncpp $(pkgconf -cflags -libs opencv4) -I./softengine/inc *.o main1.cpp -Ofast						&& \
 ./a.out

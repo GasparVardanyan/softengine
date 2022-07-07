@@ -70,6 +70,8 @@ void Camera3D :: render (const Scene & scene)
 		-transform.tx, -transform.ty, -transform.tz,  transform.tw
 	};
 
+	this->forward = vector3_transform_normal (VECTOR3_FORWARD, this->view_transform);
+
 
 
 	// frame.fill (background);
@@ -108,45 +110,26 @@ void Camera3D :: render (const Scene & scene)
 	{
 		// TODO: backface culling there...
 
+		// vector3 face_normal_x3 =
+		//     vector3_add (
+		//         geometry->vertices [geometry->faces [i].v1].normal,
+		//         vector3_add (
+		//             geometry->vertices [geometry->faces [i].v2].normal,
+		//             geometry->vertices [geometry->faces [i].v3].normal
+		//         )
+		//     )
+		// ;
+        //
+		// if (vector3_dot (forward, face_normal_x3) > 0) continue;
+
 		const Material * & m = materials [geometry->faces [i].textureindex];
 
-
-
-		// unsigned char r, g, b;
-		// r = g = b = (0.25f + (i % geometry->num_faces) * 0.75f / geometry->num_faces) * 0xFF;
 		unsigned char color = (0.25f + (i % geometry->num_faces) * 0.75f / geometry->num_faces) * 0xFF;
-		// color=0xFF;
-
-
-
 
 		// Current face vertices projected
 		const vertex_data * v1 = vertices_projected + geometry->faces [i].v1;
 		const vertex_data * v2 = vertices_projected + geometry->faces [i].v2;
 		const vertex_data * v3 = vertices_projected + geometry->faces [i].v3;
-
-// # define DBG
-# ifdef DBG
-
-		const vertex_data __v [] = {
-			{324.772220, 248.879590, 0.994024},
-			{206.308961, 250.212014, 0.993602},
-			{266.997667, 338.254473, 0.992974},
-			// {40,  100},
-			// {100, 100},
-			// {210, 270},
-
-			// {.x = 100, .y = 50},
-			// // {.x = 250, .y = 150},
-			// {.x = 50, .y = 150},
-			// {.x = 50, .y = 300},
-
-			// {.x = 413, .y = 198}, {.x = 285, .y = 199}, {.x = 360, .y = 265}
-		};
-
-		v1 = __v, v2 = __v + 1, v3 = __v + 2;
-
-# endif // DBG
 
 		// Point v1 on top, v2 on middle and v3 on bottom projected vertices
 		if (v2->y < v1->y)
@@ -191,265 +174,207 @@ void Camera3D :: render (const Scene & scene)
 			);
 		}
 
-		scalar_t yd32 = v3->y - v2->y;
-		scalar_t yd31 = v3->y - v1->y;
-		scalar_t yd21 = v2->y - v1->y;
-		scalar_t yg23 = yd21 / yd31;
-
 # if 0
-		scalar_t xd32 = v3->x - v2->x;
-		scalar_t xd31 = v3->x - v1->x;
-		scalar_t xd21 = v2->x - v1->x;
-		scalar_t zd32 = v3->z - v2->z;
-		scalar_t zd31 = v3->z - v1->z;
-		scalar_t zd21 = v2->z - v1->z;
-		scalar_t id32 = ndotl3 - ndotl2;
-		scalar_t id31 = ndotl3 - ndotl1;
-		scalar_t id21 = ndotl2 - ndotl1;
 
-		scalar_t xs23 = xd32 / yd32;
-		scalar_t xs12 = xd21 / yd21;
-		scalar_t xs13 = xd31 / yd31;
-		scalar_t zs23 = zd32 / yd32;
-		scalar_t zs12 = zd21 / yd21;
-		scalar_t zs13 = zd31 / yd31;
-		scalar_t is23 = id32 / yd32;
-		scalar_t is13 = id31 / yd31;
-		scalar_t is12 = id21 / yd21;
+{
+		scalar_t z = 1;
 
+		/*
+		 * Variable names:
+		 *
+		 * [a-z][a-z0-9].*w - normal valuse
+		 * [a-z][a-z0-9].*p - modified for projection:
+		 *                    x and y drop the fraction part,
+		 *                    alse we have to deal with z, i, u and v
+		 */
 
-		scalar_t lx, rx, ls, rs; int ty, by, yh;
-		scalar_t tz, lz, rz, lzs, rzs;
+		int x1p, x2p, x3p;
+		int y1p, y2p, y3p;
+		scalar_t z1w, z2w, z3w;
 
-		lx = rx = v1->x;
-		ty = v1->y, by = v2->y,	tz = v1->z;
-		yh = by - ty + 1;
+		x1p = v1->x, x2p = v2->x, x3p = v3->x;
+		y1p = v1->y, y2p = v2->y, y3p = v3->y;
+		z1w = v1->z, z2w = v2->z, z3w = v3->z;
 
-		if (yd21)
+		scalar_t xd32w = v3->x - v2->x;
+		scalar_t xd31w = v3->x - v1->x;
+		scalar_t xd21w = v2->x - v1->x;
+		scalar_t yd32w = v3->y - v2->y;
+		scalar_t yd31w = v3->y - v1->y;
+		scalar_t yd21w = v2->y - v1->y;
+		scalar_t zd32w = v3->z - v2->z;
+		scalar_t zd31w = v3->z - v1->z;
+		scalar_t zd21w = v2->z - v1->z;
+		scalar_t id32w = ndotl3 - ndotl2;
+		scalar_t id31w = ndotl3 - ndotl1;
+		scalar_t id21w = ndotl2 - ndotl1;
+		scalar_t ud32w = v3->u - v2->u;
+		scalar_t ud31w = v3->u - v1->u;
+		scalar_t ud21w = v2->u - v1->u;
+		scalar_t vd32w = v3->v - v2->v;
+		scalar_t vd31w = v3->v - v1->v;
+		scalar_t vd21w = v2->v - v1->v;
+
+		int xd21p = x2p - x1p;
+		int xd31p = x3p - x1p;
+		int xd32p = x3p - x2p;
+		int yd21p = y2p - y1p;
+		int yd31p = y3p - y1p;
+		int yd32p = y3p - y2p;
+
+		scalar_t xs12p = (scalar_t) xd21p / yd21p;
+		scalar_t xs13p = (scalar_t) xd31p / yd31p;
+		scalar_t xs23p = (scalar_t) xd32p / yd32p;
+
+		scalar_t zs12w = zd21w / yd21w;
+		scalar_t zs13w = zd31w / yd31w;
+		scalar_t zs23w = zd32w / yd32w;
+		scalar_t is12w = id21w / yd21w;
+		scalar_t is13w = id31w / yd31w;
+		scalar_t is23w = id32w / yd32w;
+		scalar_t us12w = ud21w / yd21w;
+		scalar_t us13w = ud31w / yd31w;
+		scalar_t us23w = ud32w / yd32w;
+		scalar_t vs12w = vd21w / yd21w;
+		scalar_t vs13w = vd31w / yd31w;
+		scalar_t vs23w = vd32w / yd32w;
+
+		scalar_t lx = x1p, rx = x1p;
+		scalar_t ls, rs;
+
+		scalar_t lz = v1->z, rz = v1->z;
+		scalar_t lzs, rzs;
+		scalar_t li = ndotl1, ri = ndotl1;
+		scalar_t lis, ris;
+		scalar_t lu = v1->u, ru = v1->u;
+		scalar_t lus, rus;
+		scalar_t lv = v1->v, rv = v1->v;
+		scalar_t lvs, rvs;
+
+		if (y1p != y2p)
 		{
-			bool v2v3 = true;
-			if (xs12 < xs13)
+			if (xs12p < xs13p)
 			{
-				ls = xs12, rs = xs13;
-
-				lz = v2->z;
-				rz = v3->z;
-				lzs = zs12;
-				rzs = zs13;
+				ls = xs12p, rs = xs13p;
+				lzs = zs12w, rzs = zs13w;
+				lis = is12w, ris = is13w;
+				lus = us12w, rus = us13w;
+				lvs = vs12w, rvs = vs13w;
 			}
 			else
 			{
-				v2v3 = false;
-				ls = xs13, rs = xs12;
-
-				lz = v3->z;
-				rz = v2->z;
-				lzs = zs13;
-				rzs = zs12;
-			}
-
-			for (; ty < by; ty++)
-			{
-				scalar_t z = lz;
-				scalar_t zs = (rz - lz) / (rx - lx);
-				for (scalar_t x = lx; x <= rx; x++)
-				{
-					if (x > 0 && ty > 0 && x < renderer_cw && ty < renderer_ch)
-						renderer->put_pixel ({(int) x, ty, z}, {color, color, color});
-					z += zs;
-				}
-				lx += ls;
-				rx += rs;
-				lz += lzs;
-				rz += rzs;
-			}
-
-			if (v2v3)
-			{
-				lx = v2->x;
-				// rx = interpolate (v1->x, v3->x, yg23);
-				ls = xs23;
-
-				lz = v2->z;
-				// rz = interpolate (v1->z, v3->z, yg23);
-				lzs = zs23;
-			}
-			else
-			{
-				rx = v2->x;
-				lx = interpolate (v1->x, v3->x, yg23);
-				rs = xs23;
-
-				rz = v2->z;
-				lz = interpolate (v1->z, v3->z, yg23);
-				rzs = zs23;
+				ls = xs13p, rs = xs12p;
+				lzs = zs13w, rzs = zs12w;
+				lis = is13w, ris = is12w;
+				lus = us13w, rus = us12w;
+				lus = us13w, rus = us12w;
 			}
 		}
 		else
 		{
-			if (xd21 > 0)
+			if (x1p < x2p)
 			{
-				lx = v1->x;
-				rx = v2->x;
-				ls = xs13;
-				rs = xs23;
+				rx = x2p;
+				ls = xs13p, rs = xs23p;
 
-				lz = v1->z;
 				rz = v2->z;
-				lzs = zs13;
-				rzs = zs23;
+				lzs = zs13w, rzs = zs23w;
+				ri = ndotl2;
+				lis = is13w, ris = is23w;
+				ru = v2->u;
+				lus = us13w, rus = us23w;
+				rv = v2->v;
+				lvs = vs13w, rvs = vs23w;
 			}
 			else
 			{
-				lx = v2->x;
-				rx = v1->x;
-				ls = xs23;
-				rs = xs13;
+				lx = x2p;
+				ls = xs23p, rs = xs13p;
 
 				lz = v2->z;
-				rz = v1->z;
-				lzs = zs23;
-				rzs = zs13;
+				lzs = zs23w, rzs = zs23w;
+				li = ndotl2;
+				lis = is23w, ris = is23w;
+				lu = v2->u;
+				lus = us23w, rus = us23w;
+				lv = v2->v;
+				lvs = vs23w, rvs = vs23w;
 			}
 		}
 
-		by = v3->y;
 
-		for (; ty <= by; ty++)
+
+				// color4 c = m->map (u, v);
+				// c.b *= i, c.g *= i, c.r *= i;
+				// color = i * 0xFF;
+				// // if (renderer->check_depth_buffer ({x, y, z}))
+				// if (z < depth_buffer [pxi])
+				// {
+				//     // frame.put_pixel ({x, y, z}, {color, color, color});
+				//     renderer->put_pixel ({x, y, z}, c);
+				//     depth_buffer [pxi] = z;
+				// }
+
+
+
+		for (int y = y1p, pxi = y1p * renderer_cw; y <= y3p; y++, pxi += renderer_cw)
 		{
 			scalar_t z = lz;
 			scalar_t zs = (rz - lz) / (rx - lx);
-			for (scalar_t x = lx; x <= rx; x++)
+			scalar_t i = li;
+			scalar_t is = (ri - li) / (rx - lx);
+			scalar_t u = lu;
+			scalar_t us = (ru - lu) / (rx - lx);
+			scalar_t v = lv;
+			scalar_t vs = (rv - lv) / (rx - lx);
+
+			for (int x = lx; x <= rx; x++)
 			{
-				if (x > 0 && ty > 0 && x < renderer_cw && ty < renderer_ch)
-					renderer->put_pixel ({(int) x, ty, z}, {color, color, color});
+				if (z < depth_buffer [pxi + x])
+				{
+					// color = 0xFF * clamp (0, 1, i);
+					color4 c = m->map (clamp (0, 1, u), clamp (0, 1, v));
+					c.b *= i, c.g *= i, c.r *= i;
+					renderer->put_pixel ({x, y}, c);
+					depth_buffer [pxi + x] = z;
+				}
 				z += zs;
+				i += is;
+				u += us;
+				v += vs;
 			}
-			lx += ls;
-			rx += rs;
-			lz += lzs;
-			rz += rzs;
-		}
 
-# elif 0
-
-# define interpolate(a,b,g) (a + (b - a) * g)
-
-		scalar_t s2 = xs23;
-		scalar_t sz2 = zs23;
-		scalar_t sc2 = is23;
-
-		int t, b;
-		scalar_t l, r, ls, rs;
-		scalar_t lz, rz, lzs, rzs;
-		scalar_t lc, rc, lcs, rcs;
-
-		t = v1->y, b = v2->y;
-
-		l = v1->x;
-		r = v1->x;
-		ls = xs12;
-		rs = xs13;
-
-		lz = v1->z;
-		rz = v1->z;
-		lzs = zs12;
-		rzs = zs13;
-
-		lc = ndotl1;
-		rc = ndotl1;
-		lcs = is12;
-		rcs = is13;
-
-
-		bool swapped = false;
-
-		if (v2->x > v3->x)
-		{
-			std::swap (ls, rs);
-			std::swap (lzs, rzs);
-			std::swap (lcs, rcs);
-			swapped = true;
-		}
-
-		for (int y = t; y < b; y++)
-		{
-			scalar_t z = lz, zs = (rz - lz) / (r - l);
-			scalar_t c = lc, cs = (rc - lc) / (r - l);
-			for (int x = l; x <= r; x++)
+			if (y == y2p && y2p != y1p)
 			{
-				color = clamp (c, 0, 1) * 0xFF;
-				if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-					if (renderer->check_depth_buffer ({x, y, z}))
-						renderer->put_pixel ({x, y, z}, {color, color, color});
-				z += zs;
-				c += cs;
+				if (xs12p < xs13p)
+				{
+					ls = xs23p;
+					lzs = zs23w;
+					lis = is23w;
+					lus = us23w;
+					lvs = vs23w;
+				}
+				else
+				{
+					rs = xs23p;
+					rzs = zs23w;
+					ris = is23w;
+					rus = us23w;
+					rvs = vs23w;
+				}
 			}
-			l+=ls;
-			r+=rs;
-			lz+=lzs;
-			rz+=rzs;
-			lc+=lcs;
-			rc+=rcs;
-		}
-
-		t = v2->y, b = v3->y;
-		if (!swapped)
-		{
-			l = v2->x;
-			r = interpolate (v1->x, v3->x, yg23);
-			lz = v2->z;
-			rz = interpolate (v1->z, v3->z, yg23);
-			lc = ndotl2;
-			rc = interpolate (ndotl1, ndotl3, yg23);
-
-			ls = s2;
-			lzs = sz2;
-			lcs = sc2;
-		}
-		else
-		{
-			r = v2->x;
-			l = interpolate (v1->x, v3->x, yg23);
-			rz = v2->z;
-			lz = interpolate (v1->z, v3->z, yg23);
-			rc = ndotl2;
-			lc = interpolate (ndotl1, ndotl3, yg23);
-
-			rs = s2;
-			rzs = sz2;
-			rcs = sc2;
-		}
-
-		for (int y = t; y < b; y++)
-		{
-			scalar_t z = lz, zs = (rz - lz) / (r - l);
-			scalar_t c = lc, cs = (rc - lc) / (r - l);
-			for (int x = l; x <= r; x++)
+			else
 			{
-				color = clamp (c, 0, 1) * 0xFF;
-				if (x > 0 && y > 0 && x < renderer_cw && y < renderer_ch)
-					if (renderer->check_depth_buffer ({x, y, z}))
-						renderer->put_pixel ({x, y, z}, {color, color, color});
-				z += zs;
-				c += cs;
+				lx += ls, rx += rs;
+				lz += lzs, rz += rzs;
+				li += lis, ri += ris;
+				lu += lus, ru += rus;
+				lv += lvs, rv += rvs;
 			}
-			l+=ls;
-			r+=rs;
-			lz+=lzs;
-			rz+=rzs;
-			lc+=lcs;
-			rc+=rcs;
 		}
-
-# undef interpolate
-
-
-// drwscnln:
+}
 
 # else
-
-{
 
 		int y1 = v1->y;
 		int y2 = v2->y;
@@ -594,13 +519,6 @@ draw_scan_line:
 			ndotlc = ndotl3;
 			goto draw_scan_line;
 		}
-}
-# endif
-# ifdef DBG
-		draw_line (v1->x, v1->y, v2->x, v2->y, {0xff, 0, 0});
-		draw_line (v2->x, v2->y, v3->x, v3->y, {0xff, 0, 0});
-		draw_line (v3->x, v3->y, v1->x, v1->y, {0xff, 0, 0});
-	break;
 # endif
 	}
 
@@ -614,7 +532,6 @@ draw_scan_line:
 	for (int i = 0; i < geometry->num_faces; i++)
 	{
 		break;
-# ifndef DBG
 		const vertex_data & v1 = vertices_projected [geometry->faces [i].v1];
 		const vertex_data & v2 = vertices_projected [geometry->faces [i].v2];
 		const vertex_data & v3 = vertices_projected [geometry->faces [i].v3];
@@ -622,7 +539,6 @@ draw_scan_line:
 		draw_line (v1.x, v1.y, v2.x, v2.y, {0, 0, 0});
 		draw_line (v2.x, v2.y, v3.x, v3.y, {0, 0, 0});
 		draw_line (v3.x, v3.y, v1.x, v1.y, {0, 0, 0});
-# endif
 
 		// vector3 c = vector3_scale ((vector3) {
 		//     vertices_projected [geometry->faces [i].v1].position.x + vertices_projected [geometry->faces [i].v2].position.x + vertices_projected [geometry->faces [i].v3].position.x,

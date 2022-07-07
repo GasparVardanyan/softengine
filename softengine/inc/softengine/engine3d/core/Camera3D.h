@@ -85,6 +85,7 @@ protected:
 	vector3 project (vector3 v);
 
 	matrix4 view_transform;
+	vector3 forward;
 
 	scalar_t * depth_buffer;
 	std::size_t * faces_to_raster;
@@ -98,6 +99,7 @@ public:
 		, view_transform ({0})
 		, renderer (renderer)
 		, background (background)
+		, forward (VECTOR3_FORWARD)
 	{
 		renderer_cw = renderer->canvas_width;
 		renderer_ch = renderer->canvas_height;

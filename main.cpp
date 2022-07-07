@@ -34,8 +34,11 @@ int main ()
 	Object3D rootContainer;
 	Scene scene3d (& rootContainer);
 
-	Camera3D camera (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)));
-	Camera3D camera1 (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene1, background)));
+	Camera3D * camera = new Camera3D (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
+	Camera3D * camera1 = new Camera3D (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene1, background)), {0x22, 0x44, 0x66});
+
+	rootContainer.addChild (camera);
+	rootContainer.addChild (camera1);
 
 	PointLight * light = new PointLight;
 	light->position = {0, 10, -3};
@@ -64,14 +67,14 @@ int main ()
 	rootContainer.addChild (monkey);
 # endif // MONKEY
 
-	camera1.position.y = 3;
-	camera1.position.z = -3;
-	camera1.rotation.x = 25 * PI / 180;
+	camera1->position.y = 3;
+	camera1->position.z = -3;
+	camera1->rotation.x = 25 * PI / 180;
 
 	bool pause = false;
 
 			scene3d.update ();
-			camera.render (scene3d);
+			camera->render (scene3d);
 	while (true)
 	{
 		if (!pause)
@@ -80,7 +83,7 @@ int main ()
 
 		cv::imshow ("softengine", scene);
 
-		// camera1.render (scene3d);
+		// camera1->render (scene3d);
 		// cv::imshow ("softengine1", scene1);
 
 		char key = cv::waitKey (1);

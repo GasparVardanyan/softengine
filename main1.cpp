@@ -81,7 +81,7 @@ int main ()
 		if (!pause)
 		{
 			scene3d.update ();
-			camera->render (scene3d);
+			scene3d.render (* camera);
 		}
 
 		cv::imshow ("softengine", scene);

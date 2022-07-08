@@ -1,12 +1,33 @@
 # ifndef __SOFTENGINE3D_CORE_SCENE_H
 # define __SOFTENGINE3D_CORE_SCENE_H
 
+# include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/core/Geometry.h"
 # include "softengine/engine3d/core/Material.h"
 # include "softengine/engine3d/core/Object3D.h"
 # include "softengine/engine3d/lights/PointLight.h"
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/math.h"
+
+class Camera3D;
+
+struct vertex_data
+{
+	union {
+		vector3 projected;
+		struct {
+			scalar_t x, y, z;
+		};
+	};
+	vector3 world_pos;
+	vector3 normal;
+	union {
+		uv texture_coordinates;
+		struct {
+			scalar_t u, v;
+		};
+	};
+};
 
 class Scene// : public Mesh
 {
@@ -47,6 +68,7 @@ public:
 	}
 
 	void update ();
+	void render (Camera3D & camera);
 
 	virtual ~Scene ()
 	{

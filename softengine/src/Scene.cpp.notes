@@ -1,0 +1,203 @@
+
+
+# if 0
+
+{
+		scalar_t z = 1;
+
+		/*
+		 * Variable names:
+		 *
+		 * [a-z][a-z0-9].*w - normal valuse
+		 * [a-z][a-z0-9].*p - modified for projection:
+		 *                    x and y drop the fraction part,
+		 *                    alse we have to deal with z, i, u and v
+		 */
+
+		int x1p, x2p, x3p;
+		int y1p, y2p, y3p;
+		scalar_t z1w, z2w, z3w;
+
+		x1p = v1->x, x2p = v2->x, x3p = v3->x;
+		y1p = v1->y, y2p = v2->y, y3p = v3->y;
+		z1w = v1->z, z2w = v2->z, z3w = v3->z;
+
+		scalar_t xd32w = v3->x - v2->x;
+		scalar_t xd31w = v3->x - v1->x;
+		scalar_t xd21w = v2->x - v1->x;
+		scalar_t yd32w = v3->y - v2->y;
+		scalar_t yd31w = v3->y - v1->y;
+		scalar_t yd21w = v2->y - v1->y;
+		scalar_t zd32w = v3->z - v2->z;
+		scalar_t zd31w = v3->z - v1->z;
+		scalar_t zd21w = v2->z - v1->z;
+		scalar_t id32w = ndotl3 - ndotl2;
+		scalar_t id31w = ndotl3 - ndotl1;
+		scalar_t id21w = ndotl2 - ndotl1;
+		scalar_t ud32w = v3->u - v2->u;
+		scalar_t ud31w = v3->u - v1->u;
+		scalar_t ud21w = v2->u - v1->u;
+		scalar_t vd32w = v3->v - v2->v;
+		scalar_t vd31w = v3->v - v1->v;
+		scalar_t vd21w = v2->v - v1->v;
+
+		int xd21p = x2p - x1p;
+		int xd31p = x3p - x1p;
+		int xd32p = x3p - x2p;
+		int yd21p = y2p - y1p;
+		int yd31p = y3p - y1p;
+		int yd32p = y3p - y2p;
+
+		scalar_t xs12p = (scalar_t) xd21p / yd21p;
+		scalar_t xs13p = (scalar_t) xd31p / yd31p;
+		scalar_t xs23p = (scalar_t) xd32p / yd32p;
+
+		scalar_t zs12w = zd21w / yd21w;
+		scalar_t zs13w = zd31w / yd31w;
+		scalar_t zs23w = zd32w / yd32w;
+		scalar_t is12w = id21w / yd21w;
+		scalar_t is13w = id31w / yd31w;
+		scalar_t is23w = id32w / yd32w;
+		scalar_t us12w = ud21w / yd21w;
+		scalar_t us13w = ud31w / yd31w;
+		scalar_t us23w = ud32w / yd32w;
+		scalar_t vs12w = vd21w / yd21w;
+		scalar_t vs13w = vd31w / yd31w;
+		scalar_t vs23w = vd32w / yd32w;
+
+		scalar_t lx = x1p, rx = x1p;
+		scalar_t ls, rs;
+
+		scalar_t lz = v1->z, rz = v1->z;
+		scalar_t lzs, rzs;
+		scalar_t li = ndotl1, ri = ndotl1;
+		scalar_t lis, ris;
+		scalar_t lu = v1->u, ru = v1->u;
+		scalar_t lus, rus;
+		scalar_t lv = v1->v, rv = v1->v;
+		scalar_t lvs, rvs;
+
+		if (y1p != y2p)
+		{
+			if (xs12p < xs13p)
+			{
+				ls = xs12p, rs = xs13p;
+				lzs = zs12w, rzs = zs13w;
+				lis = is12w, ris = is13w;
+				lus = us12w, rus = us13w;
+				lvs = vs12w, rvs = vs13w;
+			}
+			else
+			{
+				ls = xs13p, rs = xs12p;
+				lzs = zs13w, rzs = zs12w;
+				lis = is13w, ris = is12w;
+				lus = us13w, rus = us12w;
+				lus = us13w, rus = us12w;
+			}
+		}
+		else
+		{
+			if (x1p < x2p)
+			{
+				rx = x2p;
+				ls = xs13p, rs = xs23p;
+
+				rz = v2->z;
+				lzs = zs13w, rzs = zs23w;
+				ri = ndotl2;
+				lis = is13w, ris = is23w;
+				ru = v2->u;
+				lus = us13w, rus = us23w;
+				rv = v2->v;
+				lvs = vs13w, rvs = vs23w;
+			}
+			else
+			{
+				lx = x2p;
+				ls = xs23p, rs = xs13p;
+
+				lz = v2->z;
+				lzs = zs23w, rzs = zs23w;
+				li = ndotl2;
+				lis = is23w, ris = is23w;
+				lu = v2->u;
+				lus = us23w, rus = us23w;
+				lv = v2->v;
+				lvs = vs23w, rvs = vs23w;
+			}
+		}
+
+
+
+				// color4 c = m->map (u, v);
+				// c.b *= i, c.g *= i, c.r *= i;
+				// color = i * 0xFF;
+				// // if (renderer->check_depth_buffer ({x, y, z}))
+				// if (z < camera.depth_buffer [pxi])
+				// {
+				//     // frame.put_pixel ({x, y, z}, {color, color, color});
+				//     renderer->put_pixel ({x, y, z}, c);
+				//     camera.depth_buffer [pxi] = z;
+				// }
+
+
+
+		for (int y = y1p, pxi = y1p * camera.renderer_cw; y <= y3p; y++, pxi += camera.renderer_cw)
+		{
+			scalar_t z = lz;
+			scalar_t zs = (rz - lz) / (rx - lx);
+			scalar_t i = li;
+			scalar_t is = (ri - li) / (rx - lx);
+			scalar_t u = lu;
+			scalar_t us = (ru - lu) / (rx - lx);
+			scalar_t v = lv;
+			scalar_t vs = (rv - lv) / (rx - lx);
+
+			for (int x = lx; x <= rx; x++)
+			{
+				if (z < camera.depth_buffer [pxi + x])
+				{
+					// color = 0xFF * clamp (0, 1, i);
+					color4 c = m->map (clamp (0, 1, u), clamp (0, 1, v));
+					c.b *= i, c.g *= i, c.r *= i;
+					renderer->put_pixel ({x, y}, c);
+					camera.depth_buffer [pxi + x] = z;
+				}
+				z += zs;
+				i += is;
+				u += us;
+				v += vs;
+			}
+
+			if (y == y2p && y2p != y1p)
+			{
+				if (xs12p < xs13p)
+				{
+					ls = xs23p;
+					lzs = zs23w;
+					lis = is23w;
+					lus = us23w;
+					lvs = vs23w;
+				}
+				else
+				{
+					rs = xs23p;
+					rzs = zs23w;
+					ris = is23w;
+					rus = us23w;
+					rvs = vs23w;
+				}
+			}
+			else
+			{
+				lx += ls, rx += rs;
+				lz += lzs, rz += rzs;
+				li += lis, ri += ris;
+				lu += lus, ru += rus;
+				lv += lvs, rv += rvs;
+			}
+		}
+}
+
+# else

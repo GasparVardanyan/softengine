@@ -73,6 +73,9 @@ public:
 class Camera3D : public Object3D
 {
 protected:
+	friend class Scene;
+	vertex_data * vertices_projected;
+
 	int renderer_cw;
 	int renderer_ch;
 	int renderer_cs;
@@ -82,7 +85,6 @@ protected:
 
 	void put_pixel (point p, color4 c);
 	void draw_line (scalar_t x1, scalar_t y1, scalar_t x2, scalar_t y2, color4 c);
-	vector3 project (vector3 v);
 
 	matrix4 view_transform;
 	vector3 forward;
@@ -111,7 +113,7 @@ public:
 		faces_to_raster = new std::size_t [renderer_cs];
 	}
 
-	void render (const Scene & scene);
+	// void render (const Scene & scene);
 
 	virtual ~Camera3D ()
 	{

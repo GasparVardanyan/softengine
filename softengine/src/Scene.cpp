@@ -90,7 +90,7 @@ void Scene :: update (Object3D * container, matrix4 transform)
 			-camera->transform.tx, -camera->transform.ty, -camera->transform.tz,  camera->transform.tw
 		};
 
-		camera->forward = vector3_transform_normal (VECTOR3_FORWARD, camera->view_transform);
+		camera->forward = vector3_transform_normal (VECTOR3_FORWARD, camera->transform);
 	}
 
 	// TODO: Object3D type ENUMMMMMMMM
@@ -145,14 +145,16 @@ void Scene::render (Camera3D & camera)
 	 * drawable geometry in a signe mesh, then call draw_mesh for the result !!
 	 */
 
+	const matrix4 view_project_matrix = matrix4_mul (
+		camera.view_transform,
+		camera.projector
+	);
+
 	for (int i = 0; i < geometry->num_vertices; i++)
 	{
 		vector3 p = vector3_transform (
 			geometry->vertices [i].position,
-			matrix4_mul (
-				camera.view_transform,
-				camera.projector
-			)
+			view_project_matrix
 		);
 
 		p.x = (p.x + .5) * camera.renderer_cw;
@@ -194,28 +196,29 @@ void Scene::render (Camera3D & camera)
 			)
 		;
 
-		vector3 face_center =
-			vector3_scale (
-				vector3_add (
-					geometry->vertices [geometry->faces [i].v1].position,
-					vector3_add (
-						geometry->vertices [geometry->faces [i].v2].position,
-						geometry->vertices [geometry->faces [i].v3].position
-					)
-				),
-				1.l / 3
-			)
-		;
-
-		if (vector3_dot (vector3_sub (camera.transform.T, face_center), face_normal_x3) < 0)
-		{
-			continue;
-		}
-
-		// if (vector3_dot (camera.forward, face_normal_x3) <= 0)
+		// vector3 face_center =
+		//     vector3_scale (
+		//         vector3_add (
+		//             geometry->vertices [geometry->faces [i].v1].position,
+		//             vector3_add (
+		//                 geometry->vertices [geometry->faces [i].v2].position,
+		//                 geometry->vertices [geometry->faces [i].v3].position
+		//             )
+		//         ),
+		//         1.l / 3
+		//     )
+		// ;
+        //
+		// if (vector3_dot (vector3_sub (camera.transform.T, face_center), face_normal_x3) < 0)
 		// {
 		//     continue;
 		// }
+
+		// back-face culling
+		if (vector3_dot (camera.forward, face_normal_x3) > 0)
+		{
+			continue;
+		}
 
 		const Material * & m = materials [geometry->faces [i].textureindex];
 
@@ -235,6 +238,7 @@ void Scene::render (Camera3D & camera)
 			std::swap (v2, v3);
 
 # if 1
+# define clamp(value, min, max) (value < min ? min : (value > max ? max : value))
 
 		int x1, x2, x3;
 		int y1, y2, y3;
@@ -341,7 +345,7 @@ void Scene::render (Camera3D & camera)
 			}
 		}
 
-		for (int y = y1, pxi = y1 * camera.renderer_cw; y <= y3; y++, pxi += camera.renderer_cw)
+		for (int y = y1, pxi = y1 * camera.renderer_cw; y < y2; y++, pxi += camera.renderer_cw)
 		{
 			scalar_t z = lz;
 			scalar_t zs = (rz - lz) / (rx - lx);
@@ -357,17 +361,10 @@ void Scene::render (Camera3D & camera)
 				if (z < camera.depth_buffer [pxi + x])
 				{
 					scalar_t _i = clamp (i, 0, 1);
-					// if (u < 0 || v < 0 || u > 1 || v > 1)
-					// {
-					//     std::cout << u << ", " << v << std::endl;
-					//     std::cout << lu << ", " << ru << " - " << lv << ", " << rv << std::endl;
-					// }
 					// color4 c = m->map (u, v);
 					color4 c = m->map (clamp (u, 0, 1), clamp (v, 0, 1));
-					// color4 c = { .r = color };
-					// color4 c = { .r = 0xFF };
 					c.b *= _i, c.g *= _i, c.r *= _i;
-					camera.renderer->put_pixel ({x, y}, c);
+					camera.put_pixel ({x, y}, c);
 					camera.depth_buffer [pxi + x] = z;
 				}
 				z += zs;
@@ -376,33 +373,63 @@ void Scene::render (Camera3D & camera)
 				v += vs;
 			}
 
-			if (y == y2 && y2 != y1)
+			lx += ls, rx += rs;
+			lz += lzs, rz += rzs;
+			li += lis, ri += ris;
+			lu += lus, ru += rus;
+			lv += lvs, rv += rvs;
+		}
+
+		if (xs12 < xs13)
+		{
+			ls = xs23;
+			lzs = zs23;
+			lis = is23;
+			lus = us23;
+			lvs = vs23;
+		}
+		else
+		{
+			rs = xs23;
+			rzs = zs23;
+			ris = is23;
+			rus = us23;
+			rvs = vs23;
+		}
+
+		for (int y = y2, pxi = y2 * camera.renderer_cw; y <= y3; y++, pxi += camera.renderer_cw)
+		{
+			scalar_t z = lz;
+			scalar_t zs = (rz - lz) / (rx - lx);
+			scalar_t i = li;
+			scalar_t is = (ri - li) / (rx - lx);
+			scalar_t u = lu;
+			scalar_t us = (ru - lu) / (rx - lx);
+			scalar_t v = lv;
+			scalar_t vs = (rv - lv) / (rx - lx);
+
+			for (int x = lx; x <= rx; x++)
 			{
-				if (xs12 < xs13)
+				if (z < camera.depth_buffer [pxi + x])
 				{
-					ls = xs23;
-					lzs = zs23;
-					lis = is23;
-					lus = us23;
-					lvs = vs23;
+					scalar_t _i = clamp (i, 0, 1);
+					// color4 c = m->map (u, v);
+					color4 c = m->map (clamp (u, 0, 1), clamp (v, 0, 1));
+					c.b *= _i, c.g *= _i, c.r *= _i;
+					camera.put_pixel ({x, y}, c);
+					camera.depth_buffer [pxi + x] = z;
 				}
-				else
-				{
-					rs = xs23;
-					rzs = zs23;
-					ris = is23;
-					rus = us23;
-					rvs = vs23;
-				}
+				z += zs;
+				i += is;
+				u += us;
+				v += vs;
 			}
-			else
-			{
-				lx += ls, rx += rs;
-				lz += lzs, rz += rzs;
-				li += lis, ri += ris;
-				lu += lus, ru += rus;
-				lv += lvs, rv += rvs;
-			}
+
+			lx += ls, rx += rs;
+			lz += lzs, rz += rzs;
+			li += lis, ri += ris;
+			lu += lus, ru += rus;
+			lv += lvs, rv += rvs;
 		}
 
 # elif 1

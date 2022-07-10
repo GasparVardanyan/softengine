@@ -27,6 +27,10 @@ struct vertex_data
 			scalar_t u, v;
 		};
 	};
+	union {
+		scalar_t intensity;
+		scalar_t i;
+	};
 };
 
 class Scene// : public Mesh

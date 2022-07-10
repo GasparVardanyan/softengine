@@ -158,11 +158,27 @@ void Scene::render (Camera3D & camera)
 		p.x = (p.x + .5) * camera.renderer_cw;
 		p.y = (-p.y + .5) * camera.renderer_ch;
 
+		scalar_t intensity = 1;
+
+		for (int j = 0; j < num_point_lights; j++)
+		{
+			intensity *= vector3_dot (
+				geometry->vertices [i].normal,
+				vector3_normalized (
+					vector3_sub (
+						point_lights [j]->transform.T,
+						geometry->vertices [i].position
+					)
+				)
+			);
+		}
+
 		camera.vertices_projected [i] = (vertex_data) {
 			.projected = p,
 			.world_pos = geometry->vertices [i].position,
 			.normal = geometry->vertices [i].normal,
-			.texture_coordinates = geometry->vertices [i].texture_coordinates
+			.texture_coordinates = geometry->vertices [i].texture_coordinates,
+			.intensity = intensity
 		};
 	}
 
@@ -178,10 +194,28 @@ void Scene::render (Camera3D & camera)
 			)
 		;
 
-		if (vector3_dot (camera.forward, face_normal_x3) > 0)
+		vector3 face_center =
+			vector3_scale (
+				vector3_add (
+					geometry->vertices [geometry->faces [i].v1].position,
+					vector3_add (
+						geometry->vertices [geometry->faces [i].v2].position,
+						geometry->vertices [geometry->faces [i].v3].position
+					)
+				),
+				1.l / 3
+			)
+		;
+
+		if (vector3_dot (vector3_sub (camera.transform.T, face_center), face_normal_x3) < 0)
 		{
 			continue;
 		}
+
+		// if (vector3_dot (camera.forward, face_normal_x3) <= 0)
+		// {
+		//     continue;
+		// }
 
 		const Material * & m = materials [geometry->faces [i].textureindex];
 
@@ -200,40 +234,178 @@ void Scene::render (Camera3D & camera)
 		if (v3->y < v2->y)
 			std::swap (v2, v3);
 
-		std::size_t point_lights_count = num_point_lights;
+# if 1
 
-		scalar_t ndotl1 = 1, ndotl2 = 1, ndotl3 = 1;
+		int x1, x2, x3;
+		int y1, y2, y3;
 
-		for (std::size_t i = 0; i < point_lights_count; i++)
+		x1 = v1->x, x2 = v2->x, x3 = v3->x;
+		y1 = v1->y, y2 = v2->y, y3 = v3->y;
+
+		int xd32 = x3 - x2;
+		int xd31 = x3 - x1;
+		int xd21 = x2 - x1;
+		int yd32 = y3 - y2;
+		int yd31 = y3 - y1;
+		int yd21 = y2 - y1;
+		scalar_t zd32 = v3->z - v2->z;
+		scalar_t zd31 = v3->z - v1->z;
+		scalar_t zd21 = v2->z - v1->z;
+		scalar_t id32 = v3->i - v2->i;
+		scalar_t id31 = v3->i - v1->i;
+		scalar_t id21 = v2->i - v1->i;
+		scalar_t ud32 = v3->u - v2->u;
+		scalar_t ud31 = v3->u - v1->u;
+		scalar_t ud21 = v2->u - v1->u;
+		scalar_t vd32 = v3->v - v2->v;
+		scalar_t vd31 = v3->v - v1->v;
+		scalar_t vd21 = v2->v - v1->v;
+
+		scalar_t xs12 = (scalar_t) xd21 / yd21;
+		scalar_t xs13 = (scalar_t) xd31 / yd31;
+		scalar_t xs23 = (scalar_t) xd32 / yd32;
+
+		scalar_t zs12 = zd21 / yd21;
+		scalar_t zs13 = zd31 / yd31;
+		scalar_t zs23 = zd32 / yd32;
+		scalar_t is12 = id21 / yd21;
+		scalar_t is13 = id31 / yd31;
+		scalar_t is23 = id32 / yd32;
+		scalar_t us12 = ud21 / yd21;
+		scalar_t us13 = ud31 / yd31;
+		scalar_t us23 = ud32 / yd32;
+		scalar_t vs12 = vd21 / yd21;
+		scalar_t vs13 = vd31 / yd31;
+		scalar_t vs23 = vd32 / yd32;
+
+		scalar_t lx = x1, rx = x1;
+		scalar_t ls, rs;
+
+		scalar_t lz = v1->z, rz = v1->z;
+		scalar_t lzs, rzs;
+		scalar_t li = v1->i, ri = v1->i;
+		scalar_t lis, ris;
+		scalar_t lu = v1->u, ru = v1->u;
+		scalar_t lus, rus;
+		scalar_t lv = v1->v, rv = v1->v;
+		scalar_t lvs, rvs;
+
+		if (y1 != y2)
 		{
-			ndotl1 *= vector3_dot (
-				v1 -> normal,
-				vector3_normalized (
-					vector3_sub (
-						point_lights [i]->transform.T,
-						v1 -> world_pos
-					)
-				)
-			);
-			ndotl2 *= vector3_dot (
-				v2 -> normal,
-				vector3_normalized (
-					vector3_sub (
-						point_lights [i]->transform.T,
-						v2 -> world_pos
-					)
-				)
-			);
-			ndotl3 *= vector3_dot (
-				v3 -> normal,
-				vector3_normalized (
-					vector3_sub (
-						point_lights [i]->transform.T,
-						v3 -> world_pos
-					)
-				)
-			);
+			if (xs12 < xs13)
+			{
+				ls = xs12, rs = xs13;
+				lzs = zs12, rzs = zs13;
+				lis = is12, ris = is13;
+				lus = us12, rus = us13;
+				lvs = vs12, rvs = vs13;
+			}
+			else
+			{
+				ls = xs13, rs = xs12;
+				lzs = zs13, rzs = zs12;
+				lis = is13, ris = is12;
+				lus = us13, rus = us12;
+				lvs = vs13, rvs = vs12;
+			}
 		}
+		else
+		{
+			if (x1 < x2)
+			{
+				rx = x2;
+				ls = xs13, rs = xs23;
+
+				rz = v2->z;
+				lzs = zs13, rzs = zs23;
+				ri = v2->i;
+				lis = is13, ris = is23;
+				ru = v2->u;
+				lus = us13, rus = us23;
+				rv = v2->v;
+				lvs = vs13, rvs = vs23;
+			}
+			else
+			{
+				lx = x2;
+				ls = xs23, rs = xs13;
+
+				lz = v2->z;
+				lzs = zs23, rzs = zs23;
+				li = v2->i;
+				lis = is23, ris = is23;
+				lu = v2->u;
+				lus = us23, rus = us23;
+				lv = v2->v;
+				lvs = vs23, rvs = vs23;
+			}
+		}
+
+		for (int y = y1, pxi = y1 * camera.renderer_cw; y <= y3; y++, pxi += camera.renderer_cw)
+		{
+			scalar_t z = lz;
+			scalar_t zs = (rz - lz) / (rx - lx);
+			scalar_t i = li;
+			scalar_t is = (ri - li) / (rx - lx);
+			scalar_t u = lu;
+			scalar_t us = (ru - lu) / (rx - lx);
+			scalar_t v = lv;
+			scalar_t vs = (rv - lv) / (rx - lx);
+
+			for (int x = lx; x <= rx; x++)
+			{
+				if (z < camera.depth_buffer [pxi + x])
+				{
+					scalar_t _i = clamp (i, 0, 1);
+					// if (u < 0 || v < 0 || u > 1 || v > 1)
+					// {
+					//     std::cout << u << ", " << v << std::endl;
+					//     std::cout << lu << ", " << ru << " - " << lv << ", " << rv << std::endl;
+					// }
+					// color4 c = m->map (u, v);
+					color4 c = m->map (clamp (u, 0, 1), clamp (v, 0, 1));
+					// color4 c = { .r = color };
+					// color4 c = { .r = 0xFF };
+					c.b *= _i, c.g *= _i, c.r *= _i;
+					camera.renderer->put_pixel ({x, y}, c);
+					camera.depth_buffer [pxi + x] = z;
+				}
+				z += zs;
+				i += is;
+				u += us;
+				v += vs;
+			}
+
+			if (y == y2 && y2 != y1)
+			{
+				if (xs12 < xs13)
+				{
+					ls = xs23;
+					lzs = zs23;
+					lis = is23;
+					lus = us23;
+					lvs = vs23;
+				}
+				else
+				{
+					rs = xs23;
+					rzs = zs23;
+					ris = is23;
+					rus = us23;
+					rvs = vs23;
+				}
+			}
+			else
+			{
+				lx += ls, rx += rs;
+				lz += lzs, rz += rzs;
+				li += lis, ri += ris;
+				lu += lus, ru += rus;
+				lv += lvs, rv += rvs;
+			}
+		}
+
+# elif 1
 
 		int y1 = v1->y;
 		int y2 = v2->y;
@@ -266,7 +438,7 @@ void Scene::render (Camera3D & camera)
 		scalar_t ndotla, ndotlb, ndotlc, ndotld;
 
 		va = v1, vb = v3, vc = v1, vd = v2, yds = yd31, yde = yd21;
-		ndotla = ndotl1, ndotlb = ndotl3, ndotlc = ndotl1, ndotld = ndotl2;
+		ndotla = v1->i, ndotlb = v3->i, ndotlc = v1->i, ndotld = v2->i;
 
 		int ys = y1, ye = y2;
 
@@ -375,9 +547,40 @@ draw_scan_line:
 		{
 			vc = v3, yde = yd23;
 			ys = y2; ye = y3;
-			ndotlc = ndotl3;
+			ndotlc = v3->i;
 			goto draw_scan_line;
 		}
+# endif
+	}
+
+	for (int i = 0; i < geometry->num_faces; i++)
+	{
+		break;
+		const vertex_data & v1 = camera.vertices_projected [geometry->faces [i].v1];
+		const vertex_data & v2 = camera.vertices_projected [geometry->faces [i].v2];
+		const vertex_data & v3 = camera.vertices_projected [geometry->faces [i].v3];
+
+		camera.draw_line (v1.x, v1.y, v2.x, v2.y, {.g = 0xFF});
+		camera.draw_line (v2.x, v2.y, v3.x, v3.y, {.g = 0xFF});
+		camera.draw_line (v3.x, v3.y, v1.x, v1.y, {.g = 0xFF});
+
+		// vector3 c = vector3_scale ((vector3) {
+		//     camera.vertices_projected [geometry->faces [i].v1].position.x + camera.vertices_projected [geometry->faces [i].v2].position.x + camera.vertices_projected [geometry->faces [i].v3].position.x,
+		//     camera.vertices_projected [geometry->faces [i].v1].position.y + camera.vertices_projected [geometry->faces [i].v2].position.y + camera.vertices_projected [geometry->faces [i].v3].position.y,
+		//     camera.vertices_projected [geometry->faces [i].v1].position.z + camera.vertices_projected [geometry->faces [i].v2].position.z + camera.vertices_projected [geometry->faces [i].v3].position.z
+		// }, 1./3);
+		//
+		// vector3 v = project (c);
+		// if (v.x > 0 && v.y > 0 && v.x < camera.renderer_cw && v.y < camera.renderer_ch)
+		//     camera.renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0, 0});
+	}
+
+	for (int i = 0; i < geometry->num_vertices; i++)
+	{
+		break;
+		const vertex_data & v = camera.vertices_projected [i];
+		if (v.x > 0 && v.y > 0 && v.x < camera.renderer_cw && v.y < camera.renderer_ch)
+			camera.renderer->put_pixel ({(int) v.x, (int) v.y}, {0xff, 0xff, 0xff});
 	}
 
 	delete [] camera.vertices_projected;

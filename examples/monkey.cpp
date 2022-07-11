@@ -30,7 +30,7 @@ int main ()
 	Object3D rootContainer;
 	Scene scene3d (& rootContainer);
 
-	Camera3D * camera = new Camera3D (perspective_projector (45 * PI / 180, 0.1, 10000.0, (scalar_t) view_height / view_width), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
+	Camera3D * camera = new Camera3D (perspective_view_projector (45 * PI / 180, 0.1, 10000.0, view_width, view_height), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
 	rootContainer.addChild (camera);
 
 

@@ -157,9 +157,6 @@ void Scene::render (Camera3D & camera)
 			view_project_matrix
 		);
 
-		p.x = (p.x + .5) * camera.renderer_cw;
-		p.y = (-p.y + .5) * camera.renderer_ch;
-
 		scalar_t intensity = 1;
 
 		for (int j = 0; j < num_point_lights; j++)

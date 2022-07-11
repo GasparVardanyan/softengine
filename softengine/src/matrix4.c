@@ -175,3 +175,21 @@ struct matrix4 perspective_projector (scalar_t fov, scalar_t znear, scalar_t zfa
 		0, 0, -znear * l, 0
 	};
 }
+
+struct matrix4 perspective_view_projector (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t view_width, scalar_t view_height)
+{
+	const scalar_t f = (scalar_t) 1 / tan (fov / 2);
+	const scalar_t l = zfar / (zfar - znear);
+
+	const scalar_t cx = view_width / 2;
+	const scalar_t cy = view_height / 2;
+
+	const scalar_t hf = view_height * f;
+
+	return (struct matrix4) {
+		hf, 0, 0, 0,
+		0, -hf, 0, 0,
+		cx, cy, l, 1,
+		0, 0, -znear * l, 0
+	};
+}

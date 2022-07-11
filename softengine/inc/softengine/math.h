@@ -123,6 +123,7 @@ struct matrix4 matrix4_mul (struct matrix4 m1, struct matrix4 m2);
 struct matrix4 matrix4_translate (struct matrix4 m, scalar_t x, scalar_t y, scalar_t z);
 
 struct matrix4 perspective_projector (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t aspect_ratio);
+struct matrix4 perspective_view_projector (scalar_t fov, scalar_t znear, scalar_t zfar, scalar_t view_width, scalar_t view_height);
 
 _Bool matrix4_equals (matrix4 a, matrix4 b);
 

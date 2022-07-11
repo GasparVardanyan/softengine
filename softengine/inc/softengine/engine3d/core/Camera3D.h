@@ -33,8 +33,8 @@ public:
 	int renderer_cs;
 	color4 background;
 
-	Camera3D (matrix4 projector, std::shared_ptr <IRenderer> renderer, color4 background)
-		: projector (projector)
+	Camera3D (matrix4 view_projector, std::shared_ptr <IRenderer> renderer, color4 background)
+		: projector (view_projector)
 		, view_transform ({0})
 		, renderer (renderer)
 		, background (background)

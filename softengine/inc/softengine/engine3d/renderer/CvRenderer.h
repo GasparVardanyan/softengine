@@ -25,13 +25,11 @@ public:
 	virtual void put_pixel (point p, color4 c)
 	{
 		this->canvas->at <cv::Vec3b> (cv::Point (p.x, p.y)) = {c.b, c.g, c.r};
-		depth_buffer [p.y * canvas_width + p.x] = p._z;
 	};
 
 	virtual void clear_canvas ()
 	{
 		this->canvas->setTo (this->background);
-		clear_depth_buffer ();
 	}
 };
 

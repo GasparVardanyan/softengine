@@ -7,9 +7,6 @@
 
 class IRenderer
 {
-protected:
-	scalar_t * depth_buffer;
-
 public:
 	virtual void put_pixel (point p, color4 c) =0;
 	virtual void clear_canvas () =0;
@@ -21,24 +18,6 @@ public:
 		: canvas_width (canvas_width)
 		, canvas_height (canvas_height)
 	{
-		depth_buffer = new scalar_t [canvas_height * canvas_width];
-	}
-
-	bool check_depth_buffer (point p)
-	{
-		return depth_buffer [p.y * canvas_width + p.x] > p._z;
-	}
-
-	void clear_depth_buffer ()
-	{
-		static const int dbs = canvas_width * canvas_height;
-		for (int i = 0; i < dbs; i++)
-			depth_buffer [i] = std::numeric_limits <scalar_t> :: infinity ();
-	}
-
-	virtual ~IRenderer ()
-	{
-		delete [] depth_buffer;
 	}
 };
 

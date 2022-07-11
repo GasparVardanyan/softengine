@@ -240,11 +240,16 @@ void Scene::render (Camera3D & camera)
 # if 1
 # define clamp(value, min, max) (value < min ? min : (value > max ? max : value))
 
+// ~20fps faster with the monkey example
+
 		int x1, x2, x3;
 		int y1, y2, y3;
 
 		x1 = v1->x, x2 = v2->x, x3 = v3->x;
 		y1 = v1->y, y2 = v2->y, y3 = v3->y;
+
+		// if (y1 < 0 || y3 > camera.renderer_ch) continue;
+		// if (x1 < 0 || x3 > camera.renderer_cw) continue;
 
 		int xd32 = x3 - x2;
 		int xd31 = x3 - x1;

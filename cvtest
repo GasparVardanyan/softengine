@@ -4,5 +4,5 @@ rm -f *.o a.out
 
 gcc -g -include stdio.h -std=c18 -pedantic-errors -Werror=pedantic -I./softengine/inc ./softengine/src/*.c -c -Ofast						&& \
 g++ -g -include iostream -D_Bool=bool -I./softengine/inc -ljsoncpp $(pkgconf -cflags -libs opencv4) ./softengine/src/*.cpp -c -Ofast			&& \
-g++ -g -include iostream -D_Bool=bool -ljsoncpp $(pkgconf -cflags -libs opencv4) -I./softengine/inc *.o examples/monkey.cpp -Ofast						&& \
+g++ -g -include iostream -D_Bool=bool -ljsoncpp $(pkgconf -cflags -libs opencv4) -I./softengine/inc *.o main.cpp -Ofast						&& \
 ( mv a.out examples; cd examples; cpulimit --limit 90 ./a.out )

@@ -145,16 +145,16 @@ void Scene::render (Camera3D & camera)
 	 * drawable geometry in a signe mesh, then call draw_mesh for the result !!
 	 */
 
-	const matrix4 view_project_matrix = matrix4_mul (
-		camera.view_transform,
-		camera.projector
-	);
-
 	for (int i = 0; i < geometry->num_vertices; i++)
 	{
-		vector3 p = vector3_transform (
+		vector3 c = vector3_transform (
 			geometry->vertices [i].position,
-			view_project_matrix
+			camera.view_transform
+		);
+
+		vector3 p = vector3_transform (
+			c,
+			camera.projector
 		);
 
 		scalar_t intensity = 1;
@@ -175,6 +175,7 @@ void Scene::render (Camera3D & camera)
 		camera.vertices_projected [i] = (vertex_data) {
 			.projected = p,
 			.world_pos = geometry->vertices [i].position,
+			.camera_pos = c,
 			.normal = geometry->vertices [i].normal,
 			.texture_coordinates = geometry->vertices [i].texture_coordinates,
 			.intensity = intensity
@@ -185,31 +186,35 @@ void Scene::render (Camera3D & camera)
 	{
 		vector3 face_normal_x3 =
 			vector3_add (
-				geometry->vertices [geometry->faces [i].v1].normal,
+				camera.vertices_projected [geometry->faces [i].v1].normal,
 				vector3_add (
-					geometry->vertices [geometry->faces [i].v2].normal,
-					geometry->vertices [geometry->faces [i].v3].normal
+					camera.vertices_projected [geometry->faces [i].v2].normal,
+					camera.vertices_projected [geometry->faces [i].v3].normal
 				)
 			)
 		;
 
-		// vector3 face_center =
-		//     vector3_scale (
-		//         vector3_add (
-		//             geometry->vertices [geometry->faces [i].v1].position,
-		//             vector3_add (
-		//                 geometry->vertices [geometry->faces [i].v2].position,
-		//                 geometry->vertices [geometry->faces [i].v3].position
-		//             )
-		//         ),
-		//         1.l / 3
-		//     )
-		// ;
-        //
-		// if (vector3_dot (vector3_sub (camera.transform.T, face_center), face_normal_x3) < 0)
-		// {
-		//     continue;
-		// }
+		vector3 face_center =
+			vector3_scale (
+				vector3_add (
+					camera.vertices_projected [geometry->faces [i].v1].camera_pos,
+					vector3_add (
+						camera.vertices_projected [geometry->faces [i].v2].camera_pos,
+						camera.vertices_projected [geometry->faces [i].v3].camera_pos
+					)
+				),
+				1.l / 3
+			)
+		;
+
+		scalar_t tany = abs (face_center.y / face_center.z);
+		scalar_t tanx = abs (face_center.x / face_center.z);
+
+		// view-frustum culling
+		if (face_center.z < camera.near || face_center.z > camera.far || tany > camera.hft || tanx > camera.hft)
+		{
+			continue;
+		}
 
 		// back-face culling
 		if (vector3_dot (camera.forward, face_normal_x3) > 0)
@@ -234,7 +239,7 @@ void Scene::render (Camera3D & camera)
 		if (v3->y < v2->y)
 			std::swap (v2, v3);
 
-# if 1
+# if 0
 # define clamp(value, min, max) (value < min ? min : (value > max ? max : value))
 
 // ~20fps faster with the monkey example

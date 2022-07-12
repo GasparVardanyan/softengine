@@ -1,4 +1,5 @@
 # include <chrono>
+# include <cmath>
 # include <fstream>
 # include <memory>
 
@@ -16,8 +17,6 @@
 # include "softengine/engine3d/primitives/Box.h"
 # include "softengine/engine3d/renderer/CvRenderer.h"
 
-# define PI 3.141592653589793l
-
 const int view_width = 640;
 const int view_height = 460;
 
@@ -30,7 +29,7 @@ int main ()
 	Object3D rootContainer;
 	Scene scene3d (& rootContainer);
 
-	Camera3D * camera = new Camera3D (perspective_view_projector (45 * PI / 180, 0.1, 10000.0, view_width, view_height), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
+	Camera3D * camera = new Camera3D (perspective_view_projector (45 * M_PI / 180, 0.1, 10000.0, view_width, view_height), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), {0x22, 0x44, 0x66});
 	rootContainer.addChild (camera);
 
 
@@ -55,15 +54,15 @@ int main ()
 
 	Object3D * box_container = new Object3D;
 
-	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * PI / 180));
+	Box * box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (45 * M_PI / 180));
 	box->setMaterial (new FillMaterial ((color4) {.hex = 0xff0000}));
 	box->position.y = 3;
-	// box->rotation.z = 45 * PI / 180;
+	// box->rotation.z = 45 * M_PI / 180;
 
-	// box->rotation.x = -15 * PI / 180;
+	// box->rotation.x = -15 * M_PI / 180;
 	// rootContainer.addChild (box);
 	box_container->addChild (box);
-	box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (-45 * PI / 180));
+	box = new Box (.25, 2, .5, MATRIX4_ROTATIONY (-45 * M_PI / 180));
 	box->setMaterial (new FillMaterial ((color4) {.hex = 0xff0000}));
 	box->position.y = 3;
 	box_container->addChild (box);

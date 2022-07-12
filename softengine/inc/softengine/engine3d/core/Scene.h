@@ -20,6 +20,7 @@ struct vertex_data
 		};
 	};
 	vector3 world_pos;
+	vector3 camera_pos; // vertex position in the camera's coordinate system
 	vector3 normal;
 	union {
 		uv texture_coordinates;

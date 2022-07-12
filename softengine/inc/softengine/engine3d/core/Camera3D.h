@@ -27,22 +27,29 @@ protected:
 
 	scalar_t * depth_buffer;
 
+	scalar_t near, far, fov, hft;
+
 public:
 	int renderer_cw;
 	int renderer_ch;
 	int renderer_cs;
 	color4 background;
 
-	Camera3D (matrix4 view_projector, std::shared_ptr <IRenderer> renderer, color4 background)
+	Camera3D (matrix4 view_projector, std::shared_ptr <IRenderer> renderer, scalar_t near, scalar_t far, scalar_t fov, color4 background = {0})
 		: projector (view_projector)
 		, view_transform ({0})
 		, renderer (renderer)
+		, near (near)
+		, far (far)
+		, fov (fov)
 		, background (background)
 		, forward (VECTOR3_FORWARD)
 	{
 		renderer_cw = renderer->canvas_width;
 		renderer_ch = renderer->canvas_height;
 		renderer_cs = renderer_cw * renderer_ch;
+
+		hft = tan (fov / 2);
 
 		depth_buffer = new scalar_t [renderer_cs];
 	}

@@ -33,6 +33,11 @@ public:
 		children.push_back (std::shared_ptr <Object3D> (obj));
 	}
 
+	matrix4 getTransform () const
+	{
+		return transform;
+	}
+
 	virtual ~Object3D () {}
 };
 

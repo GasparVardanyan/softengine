@@ -18,6 +18,8 @@ typedef struct point point;
 
 scalar_t clamp (scalar_t value, scalar_t min, scalar_t max);
 scalar_t interpolate (scalar_t min, scalar_t max, scalar_t gradient);
+scalar_t fov_to_efl (scalar_t fov, unsigned image_plane_size);
+scalar_t efl_to_fov (scalar_t efl, unsigned image_plane_size);
 
 
 

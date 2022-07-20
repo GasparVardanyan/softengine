@@ -14,7 +14,7 @@ protected:
 
 public:
 	ImageRenderer (Image * canvas, color4 background)
-		: IRenderer (canvas, & background, 0, 0),
+		: IRenderer (canvas, & background, canvas->width, canvas->height),
 		background (background),
 		canvas (canvas)
 	{}

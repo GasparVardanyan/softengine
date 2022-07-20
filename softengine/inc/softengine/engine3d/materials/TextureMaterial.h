@@ -9,7 +9,8 @@ class TextureMaterial : public Material
 public:
 	Image raw;
 
-	TextureMaterial ()
+	TextureMaterial (bool lights = true)
+		: Material (lights)
 	{
 	}
 

@@ -9,8 +9,9 @@ class FillMaterial : public Material
 public:
 	color4 color;
 
-	FillMaterial (color4 color)
-		: color (color)
+	FillMaterial (color4 color, bool lights = true)
+		: Material (lights)
+		, color (color)
 	{
 	}
 

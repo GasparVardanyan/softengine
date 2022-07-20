@@ -370,7 +370,8 @@ void Scene::render (Camera3D & camera)
 					scalar_t _i = clamp (i, 0, 1);
 					// color4 c = m->map (u, v);
 					color4 c = m->map (clamp (u, 0, 1), clamp (v, 0, 1));
-					c.b *= _i, c.g *= _i, c.r *= _i;
+					if (m->lights)
+						c.b *= _i, c.g *= _i, c.r *= _i;
 					camera.put_pixel ({x, y}, c);
 					camera.depth_buffer [pxi + x] = z;
 				}
@@ -422,7 +423,8 @@ void Scene::render (Camera3D & camera)
 					scalar_t _i = clamp (i, 0, 1);
 					// color4 c = m->map (u, v);
 					color4 c = m->map (clamp (u, 0, 1), clamp (v, 0, 1));
-					c.b *= _i, c.g *= _i, c.r *= _i;
+					if (m->lights)
+						c.b *= _i, c.g *= _i, c.r *= _i;
 					camera.put_pixel ({x, y}, c);
 					camera.depth_buffer [pxi + x] = z;
 				}
@@ -563,8 +565,8 @@ draw_scan_line:
 				if (u < 0) u = 0; if (u > 1) u = 1;
 				if (v < 0) v = 0; if (v > 1) v = 1;
 				color4 c = m->map (u, v);
-				c.b *= i, c.g *= i, c.r *= i;
-				color = i * 0xFF;
+				if (m->lights)
+					c.b *= i, c.g *= i, c.r *= i;
 				// if (renderer->check_camera.depth_buffer ({x, y, z}))
 				if (z < camera.depth_buffer [pxi])
 				{

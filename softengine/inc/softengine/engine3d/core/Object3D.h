@@ -33,7 +33,7 @@ public:
 		children.push_back (std::shared_ptr <Object3D> (obj));
 	}
 
-	matrix4 getTransform () const
+	matrix4 getWorldTransform () const
 	{
 		return transform;
 	}

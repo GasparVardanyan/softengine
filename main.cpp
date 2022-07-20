@@ -6,7 +6,6 @@
 # include <opencv2/highgui.hpp>
 
 # include "softengine/engine3d/core/Camera3D.h"
-# include "softengine/engine3d/core/Material.h"
 # include "softengine/engine3d/core/Object3D.h"
 # include "softengine/engine3d/core/Scene.h"
 # include "softengine/engine3d/lights/PointLight.h"
@@ -15,10 +14,15 @@
 # include "softengine/engine3d/objects/Mesh.h"
 # include "softengine/engine3d/parser/ParserBABYLON.h"
 # include "softengine/engine3d/primitives/Box.h"
+# include "softengine/engine3d/primitives/Plane.h"
 # include "softengine/engine3d/renderer/CvRenderer.h"
+# include "softengine/engine3d/renderer/ImageRenderer.h"
 
 const int view_width = 640;
 const int view_height = 460;
+const scalar_t fov = 45 * M_PI / 180;
+const scalar_t near_clipping = 0.1;
+const scalar_t far_clipping = 10000;
 
 
 
@@ -31,13 +35,16 @@ int main ()
 		Object3D rootContainer;
 		Scene scene3d (& rootContainer);
 
-		Camera3D * camera = new Camera3D (perspective_view_projector (45 * M_PI / 180, 0.1, 10000.0, view_width, view_height), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), 0.1, 10000.0, 45 * M_PI / 180, {0x22, 0x44, 0x66});
+		Camera3D * camera = new Camera3D (perspective_view_projector (fov, near_clipping, far_clipping, view_width, view_height), std::shared_ptr <CvRenderer> (new CvRenderer (& scene, background)), near_clipping, far_clipping, 45 * M_PI / 180, {0x22, 0x44, 0x66});
 		rootContainer.addChild (camera);
+
+		camera->position.y = 3;
+		camera->position.z = -21;
 
 
 
 		PointLight * light = new PointLight;
-		light->position = {0, 10, -3};
+		light->position = {10, 3, -30};
 		rootContainer.addChild (light);
 
 
@@ -79,6 +86,41 @@ int main ()
 
 	/* ********** PINHOLE CAMERAS ********** */
 
+		int cam_mat_size = 500;
+		int baseline = 2;
+		scalar_t efl = fov_to_efl (fov, cam_mat_size);
+		matrix4 pvp = pinhole_view_projector (efl, efl, near_clipping, far_clipping, cam_mat_size, cam_mat_size);
+		// matrix4 pvp = perspective_view_projector (fov, near_clipping, far_clipping, cam_mat_size, cam_mat_size);
+
+		Object3D * camera_container = new Object3D;
+		rootContainer.addChild (camera_container);
+
+		TextureMaterial * cam1_material = new TextureMaterial (false);
+		cam1_material->raw.create (cam_mat_size, cam_mat_size, (color4) {0});
+
+		Camera3D * cam1 = new Camera3D (pvp, std::shared_ptr <ImageRenderer> (new ImageRenderer (& cam1_material->raw, (color4) {.g = 0x80} )), near_clipping, far_clipping, 45 * M_PI / 180, {0x22, 0x44, 0x66});
+
+		Plane * cam1_plane = new Plane (1, 1, true, MATRIX4_ROTATIONX (M_PI / 2));
+		cam1_plane->setMaterial (cam1_material);
+		cam1_plane->position.z = -1;
+		cam1->addChild (cam1_plane);
+		cam1->position.x = -baseline / 2.l;
+
+		camera_container->addChild (cam1);
+
+		TextureMaterial * cam2_material = new TextureMaterial (false);
+		cam2_material->raw.create (cam_mat_size, cam_mat_size, (color4) {0});
+
+		Camera3D * cam2 = new Camera3D (pvp, std::shared_ptr <ImageRenderer> (new ImageRenderer (& cam2_material->raw, (color4) {.g = 0x80} )), near_clipping, far_clipping, 45 * M_PI / 180, {0x22, 0x44, 0x66});
+
+		Plane * cam2_plane = new Plane (1, 1, true, MATRIX4_ROTATIONX (M_PI / 2));
+		cam2_plane->setMaterial (cam2_material);
+		cam2_plane->position.z = -1;
+		cam2->addChild (cam2_plane);
+		cam2->position.x = baseline / 2.l;
+
+		camera_container->addChild (cam2);
+
 
 
 
@@ -95,6 +137,8 @@ int main ()
 
 	bool pause = false;
 
+	bool show_pincam_canvases = 1;
+
 	while (true)
 	{
 		if (!pause)
@@ -104,8 +148,11 @@ int main ()
 		}
 
 		cv::imshow ("softengine", scene);
-		// cv::imshow ("m", material->raw.buffer);
-		//
+		if (show_pincam_canvases)
+		{
+			cv::imshow ("m1", cam1_material->raw.buffer);
+			cv::imshow ("m2", cam2_material->raw.buffer);
+		}
 
 		scalar_t move_speed = .1;
 		scalar_t rotation_speed = .01;
@@ -114,8 +161,15 @@ int main ()
 
 		if (key == '0')
 			break;
+		else if (key == '9')
+			show_pincam_canvases = !show_pincam_canvases;
 		else if (key == ' ')
 			pause = !pause;
+		else if (key == 'o')
+		{
+			scene3d.render (* cam1);
+			scene3d.render (* cam2);
+		}
 		else if (!pause)
 		{
 			if (key == 'w')
@@ -124,7 +178,7 @@ int main ()
 					camera->position,
 					vector3_transform_normal (
 						vector3_scale (VECTOR3_FORWARD, move_speed),
-						camera->getTransform ()
+						camera->getWorldTransform ()
 					)
 				);
 			}
@@ -134,7 +188,7 @@ int main ()
 					camera->position,
 					vector3_transform_normal (
 						vector3_scale (VECTOR3_LEFT, move_speed),
-						camera->getTransform ()
+						camera->getWorldTransform ()
 					)
 				);
 			}
@@ -144,7 +198,7 @@ int main ()
 					camera->position,
 					vector3_transform_normal (
 						vector3_scale (VECTOR3_BACKWARD, move_speed),
-						camera->getTransform ()
+						camera->getWorldTransform ()
 					)
 				);
 			}
@@ -154,7 +208,7 @@ int main ()
 					camera->position,
 					vector3_transform_normal (
 						vector3_scale (VECTOR3_RIGHT, move_speed),
-						camera->getTransform ()
+						camera->getWorldTransform ()
 					)
 				);
 			}
@@ -184,9 +238,6 @@ int main ()
 
 		if (!pause)
 		{
-			// box->rotation.x += .01;
-			// box->rotation.y += .01;
-
 			monkey->rotation.y += .01;
 			monkey->rotation.z += .01;
 

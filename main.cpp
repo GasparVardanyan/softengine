@@ -3,7 +3,12 @@
 # include <fstream>
 # include <memory>
 
-# include <opencv2/highgui.hpp>
+# include <opencv2/opencv.hpp>
+# include <opencv2/calib3d/calib3d.hpp>
+# include <opencv2/calib3d/calib3d_c.h>
+# include <opencv2/highgui/highgui.hpp>
+# include <opencv2/imgproc/imgproc.hpp>
+# include <opencv2/core/types_c.h>
 
 # include "softengine/engine3d/core/Camera3D.h"
 # include "softengine/engine3d/core/Object3D.h"
@@ -24,6 +29,66 @@ const scalar_t fov = 45 * M_PI / 180;
 const scalar_t near_clipping = 0.1;
 const scalar_t far_clipping = 10000;
 
+
+class Calibrator
+{
+private:
+	cv::Size chessboard_corners;
+	std::vector <std::vector <cv::Point3f>> objpoints;
+	std::vector <std::vector <cv::Point2f>> imgpoints;
+
+	cv::Mat gray;
+	std::vector <cv::Point2f> corner_pts;
+	std::vector <cv::Point3f> objp;
+	bool success;
+
+public:
+	Calibrator () {}
+	Calibrator (int xc, int yc, std::vector <cv::Point3f> objp)
+	{
+		begin (xc, yc, objp);
+	}
+
+	void begin (int xc, int yc, std::vector <cv::Point3f> objp)
+	{
+		end ();
+
+		this->chessboard_corners = {xc, yc};
+		this->objp = objp;
+	}
+
+	void calibrate_image (cv::Mat & image, bool draw = false)
+	{
+		cv::cvtColor (image, gray, cv::COLOR_BGR2GRAY);
+
+		success = cv::findChessboardCorners (
+			gray,
+			chessboard_corners,
+			corner_pts,
+			CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE
+		); // TODO: understand the flags used there
+
+		if (success)
+		{
+			cv::TermCriteria criteria (CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.001);			// TODO: understand the flags used and the parameters
+			cv::cornerSubPix (gray, corner_pts, cv::Size (11,11), cv::Size (-1, -1), criteria);
+
+			if (draw)
+				cv::drawChessboardCorners (image, chessboard_corners, corner_pts, success);
+
+			objpoints.push_back(objp);
+			imgpoints.push_back(corner_pts);
+		}
+	}
+
+	void end ()
+	{
+		this->objpoints.clear ();
+		this->imgpoints.clear ();
+		this->gray = {0};
+		this->corner_pts.clear ();
+	}
+};
 
 
 int main ()
@@ -48,7 +113,9 @@ int main ()
 		rootContainer.addChild (light);
 
 
+	/* ********** some objects ********** */
 
+# if 0
 		std::ifstream monbab ("monkey.babylon", std::ifstream::binary);
 		Json::Value monbin;
 		monbab >> monbin;
@@ -79,6 +146,7 @@ int main ()
 		box_container->addChild (box);
 
 		monkey->addChild (box_container);
+# endif
 
 
 
@@ -121,6 +189,61 @@ int main ()
 
 		camera_container->addChild (cam2);
 
+	/* ********** CHESSBOARD ********** */
+
+		cv::Mat chessboard_texture_raw (1600, 1600, CV_8UC3);
+
+		{
+		for (int y = 0; y < 1600; y++)
+			for (int x = 0; x < 1600; x++)
+				if ((y / 200 + x / 200) % 2)
+					chessboard_texture_raw.at <cv::Vec3b> (x, y) = {0x0};
+				else
+					chessboard_texture_raw.at <cv::Vec3b> (x, y) = {0xFF, 0xFF, 0xFF};
+		}
+
+		TextureMaterial *  chessboard_texture = new TextureMaterial;
+		chessboard_texture->raw.set_raw (chessboard_texture_raw);
+
+		Plane * chessboard = new Plane (1, 1, false, MATRIX4_ROTATIONX (-M_PI / 2));
+		chessboard->setMaterial (chessboard_texture);
+		chessboard->position.z = 5;
+
+		rootContainer.addChild (chessboard);
+
+
+		std::vector <cv::Point3f> objp;
+
+		for(int i = 0; i < 7; i++)
+		{
+			for(int j = 0; j < 7; j++)
+			{
+				vector3 pt = {(j + 1) / 8.l, (i + 1) / 8.l, 0};
+				pt = vector3_transform (pt, chessboard->getWorldTransform ());
+				objp.push_back (cv::Point3f (pt.x, pt.y, pt.z));
+			}
+		}
+
+		Calibrator calib1 (7, 7, objp), calib2 (7, 7, objp);
+
+		int counter = 0;
+
+		while (true)
+		{
+			scene3d.update ();
+			scene3d.render (* cam2);
+
+			calib2.calibrate_image (cam2_material->raw.buffer, true);
+
+			chessboard->rotation.y -= .01;
+
+			counter++;
+			cv::imshow ("m2", cam2_material->raw.buffer);
+			if (cv::waitKey (1) == '0') break;
+		}
+
+		return 0;
+
 
 
 
@@ -135,7 +258,7 @@ int main ()
 
 	std::chrono::steady_clock::time_point beg = std::chrono::steady_clock::now ();
 
-	bool pause = false;
+	bool pause = 0;
 
 	bool show_pincam_canvases = 1;
 
@@ -148,6 +271,9 @@ int main ()
 		}
 
 		cv::imshow ("softengine", scene);
+
+		// cv::imshow ("chessboard", chessboard_texture_raw);
+
 		if (show_pincam_canvases)
 		{
 			cv::imshow ("m1", cam1_material->raw.buffer);
@@ -238,10 +364,12 @@ int main ()
 
 		if (!pause)
 		{
-			monkey->rotation.y += .01;
-			monkey->rotation.z += .01;
+			// monkey->rotation.y += .01;
+			// monkey->rotation.z += .01;
+            //
+			// box_container->rotation.y += .03;
 
-			box_container->rotation.y += .03;
+			chessboard->rotation.z += .01;
 		}
 
 		// std::cout << monkey->rotation.y << " - " << monkey->rotation.z << std::endl;

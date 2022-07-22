@@ -48,6 +48,14 @@ public:
 		height = buffer.size [0];
 		width = buffer.size [1];
 	}
+
+	void set_raw (const cv::Mat & raw)
+	{
+		buffer = raw;
+
+		height = buffer.size [0];
+		width = buffer.size [1];
+	}
 };
 
 # endif // __SOFTENGINE3D_CORE_IMAGE_H

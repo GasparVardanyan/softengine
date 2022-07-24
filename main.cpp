@@ -32,17 +32,14 @@ const scalar_t far_clipping = 10000;
 
 class Calibrator
 {
-private:
+public:
 	cv::Size chessboard_corners;
 	std::vector <std::vector <cv::Point3f>> objpoints;
-	std::vector <std::vector <cv::Point2f>> imgpoints;
-
-	cv::Mat gray;
+	std::vector <std::vector <cv::Point2f>> imgpoints1;
+	std::vector <std::vector <cv::Point2f>> imgpoints2;
 	std::vector <cv::Point2f> corner_pts;
 	std::vector <cv::Point3f> objp;
-	bool success;
 
-public:
 	Calibrator () {}
 	Calibrator (int xc, int yc, std::vector <cv::Point3f> objp)
 	{
@@ -57,11 +54,12 @@ public:
 		this->objp = objp;
 	}
 
-	void calibrate_image (cv::Mat & image, bool draw = false)
+	bool calibrate_image (cv::Mat & image, int camera, bool draw = false)
 	{
+		cv::Mat gray;
 		cv::cvtColor (image, gray, cv::COLOR_BGR2GRAY);
 
-		success = cv::findChessboardCorners (
+		bool success = cv::findChessboardCorners (
 			gray,
 			chessboard_corners,
 			corner_pts,
@@ -76,16 +74,36 @@ public:
 			if (draw)
 				cv::drawChessboardCorners (image, chessboard_corners, corner_pts, success);
 
-			objpoints.push_back(objp);
-			imgpoints.push_back(corner_pts);
+			if (camera == 1)
+				imgpoints1.push_back(corner_pts);
+			else if (camera == 2)
+				imgpoints2.push_back(corner_pts);
 		}
+
+		return success;
+	}
+
+	void make_object_points ()
+	{
+		assert (imgpoints1.size () == imgpoints2.size ());
+
+		for (int i = 0; i < imgpoints1.size (); i++)
+			objpoints.push_back(objp);
+	}
+
+	void cancel_last_image (int camera)
+	{
+		if (camera == 1)
+			this->imgpoints1.pop_back ();
+		else if (camera == 2)
+			this->imgpoints2.pop_back ();
 	}
 
 	void end ()
 	{
 		this->objpoints.clear ();
-		this->imgpoints.clear ();
-		this->gray = {0};
+		this->imgpoints1.clear ();
+		this->imgpoints2.clear ();
 		this->corner_pts.clear ();
 	}
 };
@@ -214,33 +232,54 @@ int main ()
 
 		std::vector <cv::Point3f> objp;
 
-		for(int i = 0; i < 7; i++)
+		for(int y = 0; y < 7; y++)
 		{
-			for(int j = 0; j < 7; j++)
+			for(int x = 0; x < 7; x++)
 			{
-				vector3 pt = {(j + 1) / 8.l, (i + 1) / 8.l, 0};
+				vector3 pt = {(x + 1) / 8.l, (y + 1) / 8.l, 0};
 				pt = vector3_transform (pt, chessboard->getWorldTransform ());
 				objp.push_back (cv::Point3f (pt.x, pt.y, pt.z));
 			}
 		}
 
-		Calibrator calib1 (7, 7, objp), calib2 (7, 7, objp);
+		Calibrator calib (7, 7, objp);
 
 		int counter = 0;
 
 		while (true)
 		{
 			scene3d.update ();
+			scene3d.render (* camera);
+			scene3d.render (* cam1);
 			scene3d.render (* cam2);
 
-			calib2.calibrate_image (cam2_material->raw.buffer, true);
+			if (calib.calibrate_image (cam1_material->raw.buffer, 1, true))
+			{
+				if (calib.calibrate_image (cam2_material->raw.buffer, 2, true));
+				else
+				{
+					calib.cancel_last_image (1);
+					break;
+				}
+			}
+			else break;
 
 			chessboard->rotation.y -= .01;
 
 			counter++;
-			cv::imshow ("m2", cam2_material->raw.buffer);
+			// cv::imshow ("m1", cam1_material->raw.buffer);
+			// cv::imshow ("m2", cam2_material->raw.buffer);
+			cv::imshow ("camera", scene);
 			if (cv::waitKey (1) == '0') break;
 		}
+
+		calib.make_object_points ();
+
+		std::cout << calib.imgpoints1.size () << " - " << calib.imgpoints2.size () << std::endl;
+
+		cv::Mat pred_intr1, pred_dc1, pred_intr2, pred_dc2, R, E, F;
+		cv::Vec3d T;
+		cv::stereoCalibrate (calib.objpoints, calib.imgpoints1, calib.imgpoints2, pred_intr1, pred_dc1, pred_intr2, pred_dc2, {cam_mat_size, cam_mat_size}, R, T, E, F);
 
 		return 0;
 

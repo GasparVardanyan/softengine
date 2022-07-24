@@ -192,7 +192,7 @@ void Scene::render (Camera3D & camera)
 					camera.vertices_projected [geometry->faces [i].v3].normal
 				)
 			)
-		;
+		; // DUDE, face's normal isn't the one third of the sum of the vertex normals :D ... use cross product of edges!
 
 		vector3 face_center =
 			vector3_scale (
